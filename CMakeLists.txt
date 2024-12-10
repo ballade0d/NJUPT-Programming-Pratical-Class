@@ -29,9 +29,9 @@ if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
         MANUAL_FINALIZATION
         ${PROJECT_SOURCES}
         LoginWidget.h LoginWidget.cpp
-        LoginWidget.ui
+
         resource.qrc
-        HomeWidget.ui
+
         HomeWidget.h
         HomeWidget.cpp
         CalendarWindow.cpp

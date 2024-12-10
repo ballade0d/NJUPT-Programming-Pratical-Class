@@ -3,5 +3,6 @@
         <file>login.svg</file>
         <file>incorrect.svg</file>
         <file>correct.svg</file>
+        <file>test.qss</file>
     </qresource>
 </RCC>

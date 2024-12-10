@@ -5,10 +5,99 @@
 
 LoginWidget::LoginWidget(QWidget *parent) : QWidget(parent)
 {
-    ui.setupUi(this);
+    // 创建用户名输入框
+    usernameLineEdit = new QLineEdit(this);
+    usernameLineEdit->setGeometry((480-200)/2, 200, 200, 32); // 居中对齐, 并留出足够空间
+    usernameLineEdit->setPlaceholderText("用户名");
 
-    connect(ui.loginButton, &QPushButton::clicked, this, &LoginWidget::handleLoginButton);
-    connect(ui.registerButton, &QPushButton::clicked, this, &LoginWidget::handleRegisterButton);
+    // 创建密码输入框
+    passwordLineEdit = new QLineEdit(this);
+    passwordLineEdit->setEchoMode(QLineEdit::Password);
+    passwordLineEdit->setGeometry((480-200)/2, 200+40, 200, 32); // 紧接用户名输入框
+    passwordLineEdit->setPlaceholderText("密码");
+
+    // 创建登陆按钮
+    QPushButton *loginButton = new QPushButton(this);
+    loginButton->setGeometry((480-100)/2, 200+40+40, 100, 32); // 位于密码输入框下方
+    loginButton->setText("登陆");
+    loginButton->setObjectName("loginButton");
+
+    // 创建注册按钮
+    QPushButton *registerButton = new QPushButton(this);
+    registerButton->setGeometry((480-150)/2, 200+40+40+40, 150, 32); // 位于登录按钮下方
+    registerButton->setText("新用户注册");
+    registerButton->setObjectName("registerButton");
+
+    QString styleSheet = R"(
+/* 输入框样式 */
+QLineEdit {
+    color: black;
+    background-color: #ffffff;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    padding: 5px;
+    font-size: 14px;
+}
+
+QLineEdit::placeholder {
+    color: gray; /* 占位符文本颜色 */
+}
+
+QLineEdit:focus {
+    border: 1px solid #0078d7;
+    background-color: #f0f8ff;
+}
+
+/* 按钮样式 */
+QPushButton {
+    background-color: #0078d7;
+    color: #ffffff;
+    border: none;
+    border-radius: 5px;
+    padding: 5px 10px;
+    font-size: 14px;
+}
+
+QPushButton:hover {
+    background-color: #005bb5;
+}
+
+QPushButton:pressed {
+    background-color: #003f8c;
+    padding-left: 6px;
+    padding-top: 6px;
+}
+
+/* 登录按钮图标 */
+QPushButton#loginButton {
+    background-color: #28a745;
+}
+
+QPushButton#loginButton:hover {
+    background-color: #218838;
+}
+
+QPushButton#loginButton:pressed {
+    background-color: #1e7e34;
+}
+
+/* 新用户注册按钮 */
+QPushButton#registerButton {
+    background-color: #6c757d;
+}
+
+QPushButton#registerButton:hover {
+    background-color: #5a6268;
+}
+
+QPushButton#registerButton:pressed {
+    background-color: #4e555b;
+}
+        )";
+    setStyleSheet(styleSheet);
+
+    connect(loginButton, &QPushButton::clicked, this, &LoginWidget::handleLoginButton);
+    connect(registerButton, &QPushButton::clicked, this, &LoginWidget::handleRegisterButton);
 }
 
 // 将用户输入的密码进行加密
@@ -41,8 +130,8 @@ bool checkPassword(const QString &username, const QString &password) {
 
 void LoginWidget::handleLoginButton() {
     // 从输入框中获取账号密码
-    const QString username = ui.usernameLineEdit->text();
-    const QString password = ui.passwordLineEdit->text();
+    const QString username = usernameLineEdit->text();
+    const QString password = passwordLineEdit->text();
 
     if (checkPassword(username, password)){
         QMessageBox::information(nullptr, "信息", "登陆成功！");
@@ -68,8 +157,8 @@ bool checkIfUserExists(const QString &username, QSqlDatabase &db) {
 
 void LoginWidget::handleRegisterButton() {
     // 从输入框中获取账号密码
-    const QString username = ui.usernameLineEdit->text();
-    const QString password = ui.passwordLineEdit->text();
+    const QString username = usernameLineEdit->text();
+    const QString password = passwordLineEdit->text();
 
     QSqlDatabase db = QSqlDatabase::database();
     if (checkIfUserExists(username, db)){

@@ -8,49 +8,68 @@
 #include <QMessageBox>
 
 HomeWidget::HomeWidget(QWidget *parent) : QWidget(parent) {
-    ui.setupUi(this);
+    QVBoxLayout *mainLayout = new QVBoxLayout(this);\
+
+    // 创建打卡日历按钮
+    QPushButton *checkInButton = new QPushButton("打卡日历", this);
+    connect(checkInButton, &QPushButton::clicked, this, &HomeWidget::handleCalendarButton);
+    mainLayout->addWidget(checkInButton);
 
     QSqlDatabase db = QSqlDatabase::database();
     QSqlQueryModel *model = new QSqlQueryModel();
     model->setQuery("SELECT (name) FROM book", db);
-    ui.listView->setModel(model);
 
-    // 打卡按钮
-    connect(ui.checkInButton, &QPushButton::clicked, this, &HomeWidget::handleCalendarButton);
+    listView = new QListView(this);
+    listView->setModel(model);
+    mainLayout->addWidget(listView);
 
-    // 编辑按钮
-    QPushButton *editButton = ui.editButton;
-    // 设置编辑按钮默认状态为关闭，在选择物品时开启
-    editButton->setEnabled(false);  // 默认禁用
-    QObject::connect(ui.listView->selectionModel(), &QItemSelectionModel::selectionChanged,
-                     [editButton](const QItemSelection &selected, const QItemSelection &deselected) {
-                         Q_UNUSED(deselected);
-                         editButton->setEnabled(!selected.indexes().isEmpty());
-                     });
-    connect(editButton, &QPushButton::clicked, this, &HomeWidget::handleEditButton);
+    // 创建网格布局用于包含多个按钮
+    QGridLayout *buttonLayout = new QGridLayout();
+    mainLayout->addLayout(buttonLayout);
 
     // 学习按钮
-    QPushButton *learnButton = ui.learnButton;
-    // 设置编辑按钮默认状态为关闭，在选择物品时开启
+    QPushButton *learnButton = new QPushButton("开始学习", this);
+    // 设置按钮默认状态为关闭，在选择物品时开启
     learnButton->setEnabled(false);  // 默认禁用
-    QObject::connect(ui.listView->selectionModel(), &QItemSelectionModel::selectionChanged,
+    QObject::connect(listView->selectionModel(), &QItemSelectionModel::selectionChanged,
                      [learnButton](const QItemSelection &selected, const QItemSelection &deselected) {
                          Q_UNUSED(deselected);
                          learnButton->setEnabled(!selected.indexes().isEmpty());
                      });
     connect(learnButton, &QPushButton::clicked, this, &HomeWidget::handleLearnButton);
+    buttonLayout->addWidget(learnButton, 0, 0);
 
     // 背诵按钮
-    QPushButton *reciteButton = ui.reciteButton;
-    // 设置编辑按钮默认状态为关闭，在选择物品时开启
+    QPushButton *reciteButton = new QPushButton("开始背诵", this);
+    // 设置按钮默认状态为关闭，在选择物品时开启
     reciteButton->setEnabled(false);  // 默认禁用
-    QObject::connect(ui.listView->selectionModel(), &QItemSelectionModel::selectionChanged,
+    QObject::connect(listView->selectionModel(), &QItemSelectionModel::selectionChanged,
                      [reciteButton](const QItemSelection &selected, const QItemSelection &deselected) {
                          Q_UNUSED(deselected);
                          reciteButton->setEnabled(!selected.indexes().isEmpty());
                      });
     connect(reciteButton, &QPushButton::clicked, this, &HomeWidget::handleReciteButton);
+    buttonLayout->addWidget(reciteButton, 0, 1);
 
+    // 错题按钮
+    QPushButton *recordButton = new QPushButton("错题本", this);
+    buttonLayout->addWidget(recordButton, 1, 0);
+
+    // 复习按钮
+    QPushButton *reviewButton = new QPushButton("复习错题", this);
+    buttonLayout->addWidget(reviewButton, 1, 1);
+
+    // 编辑按钮
+    QPushButton *editButton = new QPushButton("编辑", this);
+    // 设置按钮默认状态为关闭，在选择物品时开启
+    editButton->setEnabled(false);  // 默认禁用
+    QObject::connect(listView->selectionModel(), &QItemSelectionModel::selectionChanged,
+                     [editButton](const QItemSelection &selected, const QItemSelection &deselected) {
+                         Q_UNUSED(deselected);
+                         editButton->setEnabled(!selected.indexes().isEmpty());
+                     });
+    connect(editButton, &QPushButton::clicked, this, &HomeWidget::handleEditButton);
+    mainLayout->addWidget(editButton);
 }
 
 void HomeWidget::handleCalendarButton(){
@@ -62,7 +81,7 @@ void HomeWidget::handleCalendarButton(){
 }
 
 void HomeWidget::handleEditButton(){
-    QModelIndexList indexes = ui.listView->selectionModel()->selectedIndexes();
+    QModelIndexList indexes = listView->selectionModel()->selectedIndexes();
     if(indexes.isEmpty()){
         return;
     }
@@ -87,7 +106,7 @@ void HomeWidget::handleEditButton(){
 }
 
 void HomeWidget::handleLearnButton(){
-    QModelIndexList indexes = ui.listView->selectionModel()->selectedIndexes();
+    QModelIndexList indexes = listView->selectionModel()->selectedIndexes();
     if(indexes.isEmpty()){
         return;
     }
@@ -112,7 +131,7 @@ void HomeWidget::handleLearnButton(){
 }
 
 void HomeWidget::handleReciteButton(){
-    QModelIndexList indexes = ui.listView->selectionModel()->selectedIndexes();
+    QModelIndexList indexes = listView->selectionModel()->selectedIndexes();
     if(indexes.isEmpty()){
         return;
     }

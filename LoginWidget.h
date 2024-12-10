@@ -7,7 +7,6 @@
 #include <QLabel>
 #include <QFormLayout>
 #include <QVBoxLayout>
-#include <ui_LoginWidget.h>
 
 class LoginWidget : public QWidget
 {
@@ -24,7 +23,8 @@ private slots:
     void handleRegisterButton(); // 处理注册按钮的点击事件
 
 private:
-    Ui::LoginWidget ui;
+    QLineEdit *usernameLineEdit;
+    QLineEdit *passwordLineEdit;
 };
 
 #endif // LOGINWIDGET_H

@@ -7,7 +7,7 @@
 #include <QLabel>
 #include <QFormLayout>
 #include <QVBoxLayout>
-#include <ui_HomeWidget.h>
+#include <QListView>
 
 class HomeWidget : public QWidget
 {
@@ -26,7 +26,7 @@ private slots:
     void handleReciteButton();
 
 private:
-    Ui::HomeWidget ui;
+    QListView *listView;
 };
 
 #endif // HOMEWIDGET_H
