@@ -19,8 +19,8 @@ find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets Sql)
 
 set(PROJECT_SOURCES
         main.cpp
-        mainwindow.cpp
-        mainwindow.h
+        MainWindow.cpp
+        MainWindow.h
 
 )
 
@@ -34,8 +34,15 @@ if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
         HomeWidget.ui
         HomeWidget.h
         HomeWidget.cpp
-        CalendarWIndow.cpp
+        CalendarWindow.cpp
         CalendarWindow.h
+        EditWindow.cpp
+        EditWindow.h
+
+        WordEditDialog.h
+        WordAddDialog.h
+        LearnWindow.cpp
+        LearnWindow.h
 
     )
 # Define target properties for Android with Qt 6 as:

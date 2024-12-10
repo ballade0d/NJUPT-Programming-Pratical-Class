@@ -19,7 +19,6 @@ CalendarWindow::CalendarWindow(QWidget *parent) : QDialog(parent) {
     if (isTodayCheckedIn()) {
         checkInButton->setText("今日已打卡");
         checkInButton->setEnabled(false); // 禁用按钮
-        checkInButton->setStyleSheet("background-color: gray; color: white;");
     }
     layout->addWidget(checkInButton);
 
@@ -73,7 +72,6 @@ void CalendarWindow::handleCheckInButton() {
         QPushButton *button = qobject_cast<QPushButton *>(sender());
         button->setText("今日已打卡");
         button->setEnabled(false); // 禁用按钮
-        button->setStyleSheet("background-color: gray; color: white;");
 
         // 更新日历视图以显示新的签到日期
         QTextCharFormat format;
@@ -81,10 +79,4 @@ void CalendarWindow::handleCheckInButton() {
         calendar->setDateTextFormat(QDateTime::currentDateTime().date(), format);
         QMessageBox::information(this, "每日打卡", "已成功打卡！");
     }
-}
-
-void disableButton(QPushButton *button){
-    button->setText("今日已打卡");
-    button->setEnabled(false); // 禁用按钮
-    button->setStyleSheet("background-color: gray; color: white;");
 }

@@ -21,6 +21,7 @@ signals:
 
 private slots:
     void handleCalendarButton(); // 处理打卡按钮
+    void handleEditButton(); // 处理编辑按钮
 
 private:
     Ui::HomeWidget ui;

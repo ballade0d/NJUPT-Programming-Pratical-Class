@@ -14,9 +14,9 @@ public:
 
 private slots:
     void handleCheckInButton(); // 处理打卡按钮
-    void loadCheckIns();
-    bool checkIn();
-    bool isTodayCheckedIn();
+    void loadCheckIns(); // 加载已打卡日期
+    bool checkIn(); // 打卡
+    bool isTodayCheckedIn(); // 判断今日是否打卡
 
 private:
     QCalendarWidget *calendar;

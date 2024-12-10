@@ -1,4 +1,4 @@
-#include "mainwindow.h"
+#include "MainWindow.h"
 
 #include <QApplication>
 #include <QtSql>
@@ -47,6 +47,54 @@ int main(int argc, char *argv[])
             qDebug() << "表 'check_in' 创建成功或已存在。";
         } else {
             qDebug() << "创建表 'check_in' 失败：" << query.lastError().text();
+            return -1;
+        }
+    }
+    {
+        // 单词本表
+        QSqlQuery query(db);
+        bool queryResult = query.exec(
+            "CREATE TABLE IF NOT EXISTS book ("
+            "id INTEGER PRIMARY KEY AUTOINCREMENT, "
+            "name TEXT NOT NULL)"
+            );
+        if (queryResult) {
+            qDebug() << "表 'book' 创建成功或已存在。";
+        } else {
+            qDebug() << "创建表 'book' 失败：" << query.lastError().text();
+            return -1;
+        }
+    }
+    {
+        // 单词表
+        QSqlQuery query(db);
+        bool queryResult = query.exec(
+            "CREATE TABLE IF NOT EXISTS book_word ("
+            "id INTEGER PRIMARY KEY AUTOINCREMENT, "
+            "book_id INTEGER NOT NULL, "
+            "word TEXT NOT NULL, "
+            "data TEXT)"
+            );
+        if (queryResult) {
+            qDebug() << "表 'book_word' 创建成功或已存在。";
+        } else {
+            qDebug() << "创建表 'book_word' 失败：" << query.lastError().text();
+            return -1;
+        }
+    }
+    {
+        // 错题表
+        QSqlQuery query(db);
+        bool queryResult = query.exec(
+            "CREATE TABLE IF NOT EXISTS record ("
+            "id INTEGER PRIMARY KEY AUTOINCREMENT, "
+            "book_id INTEGER NOT NULL, "
+            "word_id INTEGER NOT NULL)"
+            );
+        if (queryResult) {
+            qDebug() << "表 'record' 创建成功或已存在。";
+        } else {
+            qDebug() << "创建表 'record' 失败：" << query.lastError().text();
             return -1;
         }
     }
