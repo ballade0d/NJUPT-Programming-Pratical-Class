@@ -105,6 +105,7 @@ void EditWindow::handleAddButton(){
     if (dialog.exec() == QDialog::Accepted) {
         newWord = dialog.getWord();
         newText = dialog.getText();
+        qDebug() << newText;
         // 解析用户编辑后的 JSON
         QJsonDocument doc = QJsonDocument::fromJson(newText.toUtf8());
         // 将 JSON 转换为紧凑格式

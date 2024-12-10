@@ -2,6 +2,7 @@
 #include "CalendarWindow.h"
 #include "EditWindow.h"
 #include "LearnWindow.h"
+#include "SpellingWindow.h"
 #include <QtSql>
 #include <QCryptographicHash>
 #include <QMessageBox>
@@ -38,6 +39,17 @@ HomeWidget::HomeWidget(QWidget *parent) : QWidget(parent) {
                          learnButton->setEnabled(!selected.indexes().isEmpty());
                      });
     connect(learnButton, &QPushButton::clicked, this, &HomeWidget::handleLearnButton);
+
+    // 背诵按钮
+    QPushButton *reciteButton = ui.reciteButton;
+    // 设置编辑按钮默认状态为关闭，在选择物品时开启
+    reciteButton->setEnabled(false);  // 默认禁用
+    QObject::connect(ui.listView->selectionModel(), &QItemSelectionModel::selectionChanged,
+                     [reciteButton](const QItemSelection &selected, const QItemSelection &deselected) {
+                         Q_UNUSED(deselected);
+                         reciteButton->setEnabled(!selected.indexes().isEmpty());
+                     });
+    connect(reciteButton, &QPushButton::clicked, this, &HomeWidget::handleReciteButton);
 
 }
 
@@ -96,5 +108,30 @@ void HomeWidget::handleLearnButton(){
         LearnWindow *learnWindow = new LearnWindow(nullptr, bookId.toInt());
         learnWindow->setWindowTitle("单词背诵");
         learnWindow->show();
+    }
+}
+
+void HomeWidget::handleReciteButton(){
+    QModelIndexList indexes = ui.listView->selectionModel()->selectedIndexes();
+    if(indexes.isEmpty()){
+        return;
+    }
+    // 获取列表中选中的物品
+    QModelIndex index = indexes.first();
+    QString book = index.data(Qt::DisplayRole).toString();
+
+    QSqlDatabase db = QSqlDatabase::database();
+    QSqlQuery query(db);
+    query.prepare("SELECT id from book WHERE name = :name");
+    query.bindValue(":name", book);
+    query.exec();
+
+    if (query.next()) {
+        // 从数据库中获取单词本Id
+        QVariant bookId = query.value(0).toInt();
+
+        SpellingWindow *reciteWindow = new SpellingWindow(nullptr, bookId.toInt());
+        reciteWindow->setWindowTitle("单词背诵");
+        reciteWindow->show();
     }
 }

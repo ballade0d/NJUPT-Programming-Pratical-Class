@@ -43,6 +43,10 @@ if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
         WordAddDialog.h
         LearnWindow.cpp
         LearnWindow.h
+        MultipleChoiceWindow.cpp
+        SpellingWindow.cpp
+        MultipleChoiceWindow.h
+        SpellingWindow.h
 
     )
 # Define target properties for Android with Qt 6 as:

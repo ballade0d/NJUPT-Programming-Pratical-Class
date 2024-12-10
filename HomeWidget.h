@@ -23,6 +23,7 @@ private slots:
     void handleCalendarButton(); // 处理打卡按钮
     void handleEditButton(); // 处理编辑按钮
     void handleLearnButton();
+    void handleReciteButton();
 
 private:
     Ui::HomeWidget ui;

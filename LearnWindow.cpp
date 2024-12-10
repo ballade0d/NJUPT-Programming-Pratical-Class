@@ -67,7 +67,7 @@ void LearnWindow::updateWordDisplay(){
         QJsonDocument doc = QJsonDocument::fromJson(jsonData.toUtf8());
         QJsonObject obj = doc.object();
         // 加粗单词
-          QString htmlContent = "<strong style='font-size: 24px;'>" + word + "</strong><br/><br/><br/>";
+        QString htmlContent = "<strong style='font-size: 24px;'>" + word + "</strong><br/><br/><br/>";
         // 遍历 JSON 对象中的所有键值对
         for (auto it = obj.begin(); it != obj.end(); ++it) {
             htmlContent += "<strong>" + it.key() + ":</strong> " + it.value().toString() + "<br/>";
