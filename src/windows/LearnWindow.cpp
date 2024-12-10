@@ -15,7 +15,7 @@ LearnWindow::LearnWindow(QWidget *parent, int bookId) : QWidget(parent) {
     query.bindValue(":book_id", bookId);
     query.exec();
 
-    while (query.next()){
+    while (query.next()) {
         QString word = query.value(0).toString();
         QString data = query.value(1).toString();
 
@@ -40,26 +40,26 @@ LearnWindow::LearnWindow(QWidget *parent, int bookId) : QWidget(parent) {
     connect(previousButton, &QPushButton::clicked, this, &LearnWindow::showPreviousWord);
     connect(nextButton, &QPushButton::clicked, this, &LearnWindow::showNextWord);
 
-    if(!words.isEmpty()){
+    if (!words.isEmpty()) {
         updateWordDisplay();
     }
 }
 
-void LearnWindow::showPreviousWord(){
-    if(currentIndex > 0){
+void LearnWindow::showPreviousWord() {
+    if (currentIndex > 0) {
         currentIndex--;
         updateWordDisplay();
     }
 }
 
-void LearnWindow::showNextWord(){
+void LearnWindow::showNextWord() {
     if (currentIndex < words.size() - 1) {
         currentIndex++;
         updateWordDisplay();
     }
 }
 
-void LearnWindow::updateWordDisplay(){
+void LearnWindow::updateWordDisplay() {
     if (currentIndex >= 0 && currentIndex < words.size()) {
         QString word = words[currentIndex].first;
 

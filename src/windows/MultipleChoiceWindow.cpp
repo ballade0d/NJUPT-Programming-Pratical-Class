@@ -11,16 +11,17 @@ MultipleChoiceWindow::MultipleChoiceWindow(QWidget *parent, int bookId) : QWidge
     query.bindValue(":book_id", bookId);
     query.exec();
 
-    while (query.next()){
+    while (query.next()) {
         QString word = query.value(0).toString();
         QString data = query.value(1).toString();
         words.append(qMakePair(word, data));
     }
 }
 
-void MultipleChoiceWindow::updateWordDisplay(){
+void MultipleChoiceWindow::updateWordDisplay() {
 
 }
-bool MultipleChoiceWindow::check(){
+
+bool MultipleChoiceWindow::check() {
 
 }

@@ -17,7 +17,7 @@ SpellingWindow::SpellingWindow(QWidget *parent, int bookId) : QWidget(parent) {
     query.bindValue(":book_id", bookId);
     query.exec();
 
-    while (query.next()){
+    while (query.next()) {
         QString word = query.value(0).toString();
         QString data = query.value(1).toString();
         words.append(qMakePair(word, data));
@@ -37,19 +37,19 @@ SpellingWindow::SpellingWindow(QWidget *parent, int bookId) : QWidget(parent) {
     vLayout->addLayout(wordAndIcon);
 
     spellingLayout = new QHBoxLayout();
-    vLayout ->addLayout(spellingLayout);
+    vLayout->addLayout(spellingLayout);
 
     nextButton = new QPushButton("下一个");
     vLayout->addWidget(nextButton);
 
     connect(nextButton, &QPushButton::clicked, this, &SpellingWindow::handleNextButton);
 
-    if(!words.isEmpty()){
+    if (!words.isEmpty()) {
         updateWordDisplay();
     }
 }
 
-void SpellingWindow::handleNextButton(){
+void SpellingWindow::handleNextButton() {
     QPixmap pixmap;
     if (check()) {
         pixmap = QPixmap(":/correct.svg");
@@ -68,19 +68,19 @@ void SpellingWindow::handleNextButton(){
             currentIndex++;
             updateWordDisplay();
             nextButton->setEnabled(true);
-        }else{
+        } else {
             //
         }
     });
 }
 
-bool SpellingWindow::check(){
+bool SpellingWindow::check() {
     QString result;
     for (int i = 0; i < spellingLayout->count(); ++i) {
         QLayoutItem *item = spellingLayout->itemAt(i);
-        QWidget* widget = item->widget();  // 尝试获取 QLayoutItem 中的 QWidget
+        QWidget *widget = item->widget();  // 尝试获取 QLayoutItem 中的 QWidget
         if (widget) {
-            QLineEdit* lineEdit = qobject_cast<QLineEdit*>(widget);
+            QLineEdit *lineEdit = qobject_cast<QLineEdit *>(widget);
             if (lineEdit) {
                 result += lineEdit->text();
             }
@@ -90,9 +90,9 @@ bool SpellingWindow::check(){
     return result == words[currentIndex].first;
 }
 
-void SpellingWindow::updateWordDisplay(){
+void SpellingWindow::updateWordDisplay() {
     if (currentIndex >= 0 && currentIndex < words.size()) {
-        QLayoutItem* item;
+        QLayoutItem *item;
         // 删除所有格子控件
         while ((item = spellingLayout->takeAt(0)) != nullptr) {
             delete item->widget();
@@ -105,8 +105,8 @@ void SpellingWindow::updateWordDisplay(){
         QJsonObject obj = doc.object();
         wordLabel->setText(obj.find("释义")->toString());
 
-        std::vector<QLineEdit*> lineEdits(word.length());
-        for (int i = 0; i < word.length(); i++){
+        std::vector<QLineEdit *> lineEdits(word.length());
+        for (int i = 0; i < word.length(); i++) {
             lineEdits[i] = new QLineEdit();
             lineEdits[i]->setMaxLength(1);  // 设置最大长度为1
             lineEdits[i]->setFixedWidth(30);  // 设置固定宽度
@@ -114,8 +114,8 @@ void SpellingWindow::updateWordDisplay(){
 
             if (i > 0) {
                 // 将前一个 QLineEdit 的 textEdited 信号连接 setFocus 到下一个 lineEdit
-                QObject::connect(lineEdits[i - 1], &QLineEdit::textEdited, [lineEdits, i](const QString &text){
-                    if (!text.isEmpty()){
+                QObject::connect(lineEdits[i - 1], &QLineEdit::textEdited, [lineEdits, i](const QString &text) {
+                    if (!text.isEmpty()) {
                         lineEdits[i]->setFocus();
                     }
                 });

@@ -8,17 +8,18 @@
 #include <QFormLayout>
 #include <QVBoxLayout>
 
-class LoginWidget : public QWidget
-{
-    Q_OBJECT
+class LoginWidget : public QWidget {
+Q_OBJECT
 
 public:
     explicit LoginWidget(QWidget *parent = nullptr);
 
 signals:
+
     void loginSuccessful();  // 发送登录成功的信号
 
 private slots:
+
     void handleLoginButton();  // 处理登录按钮的点击事件
     void handleRegisterButton(); // 处理注册按钮的点击事件
 

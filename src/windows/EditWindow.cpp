@@ -53,9 +53,9 @@ EditWindow::EditWindow(QWidget *parent, int bookId) : QDialog(parent) {
     connect(deleteButton, &QPushButton::clicked, this, &EditWindow::handleDeleteButton);
 }
 
-void EditWindow::handleEditButton(){
+void EditWindow::handleEditButton() {
     QModelIndexList indexes = wordList->selectionModel()->selectedIndexes();
-    if(indexes.isEmpty()){
+    if (indexes.isEmpty()) {
         return;
     }
     // 获取列表中选中的物品
@@ -95,7 +95,7 @@ void EditWindow::handleEditButton(){
     }
 }
 
-void EditWindow::handleAddButton(){
+void EditWindow::handleAddButton() {
     QSqlDatabase db = QSqlDatabase::database();
 
     bool ok;
@@ -122,9 +122,9 @@ void EditWindow::handleAddButton(){
     refreshList();
 }
 
-void EditWindow::handleDeleteButton(){
+void EditWindow::handleDeleteButton() {
     QModelIndexList indexes = wordList->selectionModel()->selectedIndexes();
-    if(indexes.isEmpty()){
+    if (indexes.isEmpty()) {
         return;
     }
     // 获取列表中选中的物品
@@ -142,7 +142,7 @@ void EditWindow::handleDeleteButton(){
     refreshList();
 }
 
-void EditWindow::refreshList(){
+void EditWindow::refreshList() {
     QSqlDatabase db = QSqlDatabase::database();
     // 查询数据库
     QSqlQuery query(db);
@@ -155,5 +155,5 @@ void EditWindow::refreshList(){
         wordList->setModel(model);
     }
 
-    static_cast<QSqlQueryModel*>(wordList->model())->setQuery(query);
+    static_cast<QSqlQueryModel *>(wordList->model())->setQuery(query);
 }

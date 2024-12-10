@@ -6,17 +6,20 @@
 #include <QVBoxLayout>
 #include <QListView>
 
-class EditWindow : public QDialog
-{
-    Q_OBJECT
+class EditWindow : public QDialog {
+Q_OBJECT
 
 public:
     explicit EditWindow(QWidget *parent = nullptr, int bookId = -1);
 
 private slots:
+
     void handleAddButton();
+
     void handleEditButton();
+
     void handleDeleteButton();
+
     void refreshList();
 
 private:

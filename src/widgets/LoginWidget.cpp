@@ -3,28 +3,27 @@
 #include <QCryptographicHash>
 #include <QMessageBox>
 
-LoginWidget::LoginWidget(QWidget *parent) : QWidget(parent)
-{
+LoginWidget::LoginWidget(QWidget *parent) : QWidget(parent) {
     // 创建用户名输入框
     usernameLineEdit = new QLineEdit(this);
-    usernameLineEdit->setGeometry((480-200)/2, 200, 200, 32); // 居中对齐, 并留出足够空间
+    usernameLineEdit->setGeometry((480 - 200) / 2, 200, 200, 32); // 居中对齐, 并留出足够空间
     usernameLineEdit->setPlaceholderText("用户名");
 
     // 创建密码输入框
     passwordLineEdit = new QLineEdit(this);
     passwordLineEdit->setEchoMode(QLineEdit::Password);
-    passwordLineEdit->setGeometry((480-200)/2, 200+40, 200, 32); // 紧接用户名输入框
+    passwordLineEdit->setGeometry((480 - 200) / 2, 200 + 40, 200, 32); // 紧接用户名输入框
     passwordLineEdit->setPlaceholderText("密码");
 
     // 创建登陆按钮
     QPushButton *loginButton = new QPushButton(this);
-    loginButton->setGeometry((480-100)/2, 200+40+40, 100, 32); // 位于密码输入框下方
+    loginButton->setGeometry((480 - 100) / 2, 200 + 40 + 40, 100, 32); // 位于密码输入框下方
     loginButton->setText("登陆");
     loginButton->setObjectName("loginButton");
 
     // 创建注册按钮
     QPushButton *registerButton = new QPushButton(this);
-    registerButton->setGeometry((480-150)/2, 200+40+40+40, 150, 32); // 位于登录按钮下方
+    registerButton->setGeometry((480 - 150) / 2, 200 + 40 + 40 + 40, 150, 32); // 位于登录按钮下方
     registerButton->setText("新用户注册");
     registerButton->setObjectName("registerButton");
 
@@ -101,7 +100,7 @@ QPushButton#registerButton:pressed {
 }
 
 // 将用户输入的密码进行加密
-QString encryptPassword(const QString &password){
+QString encryptPassword(const QString &password) {
     QByteArray hash = QCryptographicHash::hash(password.toUtf8(), QCryptographicHash::Sha256);
     QString hashedPassword = QString::fromUtf8(hash.toHex());
     return hashedPassword;
@@ -133,10 +132,10 @@ void LoginWidget::handleLoginButton() {
     const QString username = usernameLineEdit->text();
     const QString password = passwordLineEdit->text();
 
-    if (checkPassword(username, password)){
+    if (checkPassword(username, password)) {
         QMessageBox::information(nullptr, "信息", "登陆成功！");
         emit loginSuccessful();
-    }else{
+    } else {
         QMessageBox::critical(nullptr, "错误", "用户名或密码错误！");
     }
 }
@@ -161,7 +160,7 @@ void LoginWidget::handleRegisterButton() {
     const QString password = passwordLineEdit->text();
 
     QSqlDatabase db = QSqlDatabase::database();
-    if (checkIfUserExists(username, db)){
+    if (checkIfUserExists(username, db)) {
         QMessageBox::critical(nullptr, "错误", "用户名已存在，请登陆！");
     } else {
         QSqlQuery query(db);
@@ -169,7 +168,7 @@ void LoginWidget::handleRegisterButton() {
         query.bindValue(":username", username);
         query.bindValue(":password", encryptPassword(password));
 
-        if(query.exec()){
+        if (query.exec()) {
             QMessageBox::information(nullptr, "信息", "注册成功！");
             emit loginSuccessful();
         }

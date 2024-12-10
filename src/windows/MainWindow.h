@@ -3,15 +3,15 @@
 
 #include <QWidget>
 #include <QStackedWidget>
-#include "LoginWidget.h"
-#include "HomeWidget.h"
+#include "../widgets/LoginWidget.h"
+#include "../widgets/HomeWidget.h"
 
-class MainWindow : public QWidget
-{
-    Q_OBJECT
+class MainWindow : public QWidget {
+Q_OBJECT
 
 public:
     MainWindow(QWidget *parent = nullptr);
+
     ~MainWindow();
 
 private:
@@ -19,4 +19,5 @@ private:
     LoginWidget *loginWidget;
     HomeWidget *homeWidget;
 };
+
 #endif // MAINWINDOW_H

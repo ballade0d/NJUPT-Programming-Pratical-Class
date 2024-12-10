@@ -1,8 +1,8 @@
 #include "HomeWidget.h"
-#include "CalendarWindow.h"
-#include "EditWindow.h"
-#include "LearnWindow.h"
-#include "SpellingWindow.h"
+#include "../windows/CalendarWindow.h"
+#include "../windows/EditWindow.h"
+#include "../windows/LearnWindow.h"
+#include "../windows/SpellingWindow.h"
 #include <QtSql>
 #include <QCryptographicHash>
 #include <QMessageBox>
@@ -72,7 +72,7 @@ HomeWidget::HomeWidget(QWidget *parent) : QWidget(parent) {
     mainLayout->addWidget(editButton);
 }
 
-void HomeWidget::handleCalendarButton(){
+void HomeWidget::handleCalendarButton() {
     CalendarWindow *calendarWindow = new CalendarWindow(this);
     // 设置窗口标题
     calendarWindow->setWindowTitle("每日打卡");
@@ -80,9 +80,9 @@ void HomeWidget::handleCalendarButton(){
     calendarWindow->exec();
 }
 
-void HomeWidget::handleEditButton(){
+void HomeWidget::handleEditButton() {
     QModelIndexList indexes = listView->selectionModel()->selectedIndexes();
-    if(indexes.isEmpty()){
+    if (indexes.isEmpty()) {
         return;
     }
     // 获取列表中选中的物品
@@ -105,9 +105,9 @@ void HomeWidget::handleEditButton(){
     }
 }
 
-void HomeWidget::handleLearnButton(){
+void HomeWidget::handleLearnButton() {
     QModelIndexList indexes = listView->selectionModel()->selectedIndexes();
-    if(indexes.isEmpty()){
+    if (indexes.isEmpty()) {
         return;
     }
     // 获取列表中选中的物品
@@ -130,9 +130,9 @@ void HomeWidget::handleLearnButton(){
     }
 }
 
-void HomeWidget::handleReciteButton(){
+void HomeWidget::handleReciteButton() {
     QModelIndexList indexes = listView->selectionModel()->selectedIndexes();
-    if(indexes.isEmpty()){
+    if (indexes.isEmpty()) {
         return;
     }
     // 获取列表中选中的物品

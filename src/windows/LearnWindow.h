@@ -4,16 +4,18 @@
 #include <QWidget>
 #include <QLabel>
 
-class LearnWindow : public QWidget
-{
-    Q_OBJECT
+class LearnWindow : public QWidget {
+Q_OBJECT
 
 public:
     explicit LearnWindow(QWidget *parent = nullptr, int bookId = -1);
 
 private slots:
+
     void showPreviousWord();
+
     void showNextWord();
+
     void updateWordDisplay();
 
 

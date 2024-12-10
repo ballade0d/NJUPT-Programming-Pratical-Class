@@ -2,8 +2,7 @@
 
 #include <QStackedWidget>
 
-MainWindow::MainWindow(QWidget *parent) : QWidget(parent)
-{
+MainWindow::MainWindow(QWidget *parent) : QWidget(parent) {
     // 创建堆栈窗口
     stackedWidget = new QStackedWidget(this);
 
@@ -24,6 +23,5 @@ MainWindow::MainWindow(QWidget *parent) : QWidget(parent)
     });
 }
 
-MainWindow::~MainWindow()
-{
+MainWindow::~MainWindow() {
 }

@@ -9,16 +9,18 @@
 #include <QKeyEvent>
 #include <QPushButton>
 
-class SpellingWindow : public QWidget
-{
-    Q_OBJECT
+class SpellingWindow : public QWidget {
+Q_OBJECT
 
 public:
     explicit SpellingWindow(QWidget *parent = nullptr, int bookId = -1);
 
 private slots:
+
     void handleNextButton();
+
     void updateWordDisplay();
+
     bool check();
 
 private:
@@ -32,7 +34,8 @@ private:
 
 // 退格监听
 class BackspaceFilter : public QObject {
-    Q_OBJECT
+Q_OBJECT
+
 protected:
     bool eventFilter(QObject *obj, QEvent *event) override {
         if (event->type() == QEvent::KeyPress) {
@@ -50,6 +53,7 @@ protected:
     }
 
 signals:
+
     void requestPreviousFocus();
 };
 

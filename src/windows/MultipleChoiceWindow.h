@@ -9,15 +9,16 @@
 #include <QKeyEvent>
 #include <QPushButton>
 
-class MultipleChoiceWindow : public QWidget
-{
-    Q_OBJECT
+class MultipleChoiceWindow : public QWidget {
+Q_OBJECT
 
 public:
     explicit MultipleChoiceWindow(QWidget *parent = nullptr, int bookId = -1);
 
 private slots:
+
     void updateWordDisplay();
+
     bool check();
 
 private:

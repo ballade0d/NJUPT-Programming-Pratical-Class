@@ -1,10 +1,9 @@
-#include "MainWindow.h"
+#include "windows/MainWindow.h"
 
 #include <QApplication>
 #include <QtSql>
 
-int main(int argc, char *argv[])
-{
+int main(int argc, char *argv[]) {
     QApplication a(argc, argv);
 
     QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE");
@@ -23,11 +22,11 @@ int main(int argc, char *argv[])
         // 用户名、密码表
         QSqlQuery query(db);
         bool queryResult = query.exec(
-            "CREATE TABLE IF NOT EXISTS user_password ("
-            "id INTEGER PRIMARY KEY AUTOINCREMENT, "
-            "username TEXT NOT NULL, "
-            "password TEXT NOT NULL)"
-            );
+                "CREATE TABLE IF NOT EXISTS user_password ("
+                "id INTEGER PRIMARY KEY AUTOINCREMENT, "
+                "username TEXT NOT NULL, "
+                "password TEXT NOT NULL)"
+        );
         if (queryResult) {
             qDebug() << "表 'user_password' 创建成功或已存在。";
         } else {
@@ -39,10 +38,10 @@ int main(int argc, char *argv[])
         // 打卡日期表
         QSqlQuery query(db);
         bool queryResult = query.exec(
-            "CREATE TABLE IF NOT EXISTS check_in ("
-            "id INTEGER PRIMARY KEY AUTOINCREMENT, "
-            "date DATETIME NOT NULL)"
-            );
+                "CREATE TABLE IF NOT EXISTS check_in ("
+                "id INTEGER PRIMARY KEY AUTOINCREMENT, "
+                "date DATETIME NOT NULL)"
+        );
         if (queryResult) {
             qDebug() << "表 'check_in' 创建成功或已存在。";
         } else {
@@ -54,10 +53,10 @@ int main(int argc, char *argv[])
         // 单词本表
         QSqlQuery query(db);
         bool queryResult = query.exec(
-            "CREATE TABLE IF NOT EXISTS book ("
-            "id INTEGER PRIMARY KEY AUTOINCREMENT, "
-            "name TEXT NOT NULL)"
-            );
+                "CREATE TABLE IF NOT EXISTS book ("
+                "id INTEGER PRIMARY KEY AUTOINCREMENT, "
+                "name TEXT NOT NULL)"
+        );
         if (queryResult) {
             qDebug() << "表 'book' 创建成功或已存在。";
         } else {
@@ -69,12 +68,12 @@ int main(int argc, char *argv[])
         // 单词表
         QSqlQuery query(db);
         bool queryResult = query.exec(
-            "CREATE TABLE IF NOT EXISTS book_word ("
-            "id INTEGER PRIMARY KEY AUTOINCREMENT, "
-            "book_id INTEGER NOT NULL, "
-            "word TEXT NOT NULL, "
-            "data TEXT)"
-            );
+                "CREATE TABLE IF NOT EXISTS book_word ("
+                "id INTEGER PRIMARY KEY AUTOINCREMENT, "
+                "book_id INTEGER NOT NULL, "
+                "word TEXT NOT NULL, "
+                "data TEXT)"
+        );
         if (queryResult) {
             qDebug() << "表 'book_word' 创建成功或已存在。";
         } else {
@@ -86,11 +85,11 @@ int main(int argc, char *argv[])
         // 错题表
         QSqlQuery query(db);
         bool queryResult = query.exec(
-            "CREATE TABLE IF NOT EXISTS record ("
-            "id INTEGER PRIMARY KEY AUTOINCREMENT, "
-            "book_id INTEGER NOT NULL, "
-            "word_id INTEGER NOT NULL)"
-            );
+                "CREATE TABLE IF NOT EXISTS record ("
+                "id INTEGER PRIMARY KEY AUTOINCREMENT, "
+                "book_id INTEGER NOT NULL, "
+                "word_id INTEGER NOT NULL)"
+        );
         if (queryResult) {
             qDebug() << "表 'record' 创建成功或已存在。";
         } else {
