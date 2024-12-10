@@ -1,10 +1,10 @@
 #include "HomeWidget.h"
 #include "CalendarWindow.h"
 #include "EditWindow.h"
+#include "LearnWindow.h"
 #include <QtSql>
 #include <QCryptographicHash>
 #include <QMessageBox>
-#include <QCalendarWidget>
 
 HomeWidget::HomeWidget(QWidget *parent) : QWidget(parent) {
     ui.setupUi(this);
@@ -14,8 +14,11 @@ HomeWidget::HomeWidget(QWidget *parent) : QWidget(parent) {
     model->setQuery("SELECT (name) FROM book", db);
     ui.listView->setModel(model);
 
-    QPushButton *editButton = ui.editButton;
+    // 打卡按钮
+    connect(ui.checkInButton, &QPushButton::clicked, this, &HomeWidget::handleCalendarButton);
 
+    // 编辑按钮
+    QPushButton *editButton = ui.editButton;
     // 设置编辑按钮默认状态为关闭，在选择物品时开启
     editButton->setEnabled(false);  // 默认禁用
     QObject::connect(ui.listView->selectionModel(), &QItemSelectionModel::selectionChanged,
@@ -23,9 +26,18 @@ HomeWidget::HomeWidget(QWidget *parent) : QWidget(parent) {
                          Q_UNUSED(deselected);
                          editButton->setEnabled(!selected.indexes().isEmpty());
                      });
-
-    connect(ui.checkInButton, &QPushButton::clicked, this, &HomeWidget::handleCalendarButton);
     connect(editButton, &QPushButton::clicked, this, &HomeWidget::handleEditButton);
+
+    // 学习按钮
+    QPushButton *learnButton = ui.learnButton;
+    // 设置编辑按钮默认状态为关闭，在选择物品时开启
+    learnButton->setEnabled(false);  // 默认禁用
+    QObject::connect(ui.listView->selectionModel(), &QItemSelectionModel::selectionChanged,
+                     [learnButton](const QItemSelection &selected, const QItemSelection &deselected) {
+                         Q_UNUSED(deselected);
+                         learnButton->setEnabled(!selected.indexes().isEmpty());
+                     });
+    connect(learnButton, &QPushButton::clicked, this, &HomeWidget::handleLearnButton);
 
 }
 
@@ -56,8 +68,33 @@ void HomeWidget::handleEditButton(){
         // 从数据库中获取单词本Id
         QVariant bookId = query.value(0).toInt();
 
-        EditWindow *editWindow = new EditWindow(this, &bookId);
+        EditWindow *editWindow = new EditWindow(this, bookId.toInt());
         editWindow->setWindowTitle("编辑单词本");
         editWindow->exec();
+    }
+}
+
+void HomeWidget::handleLearnButton(){
+    QModelIndexList indexes = ui.listView->selectionModel()->selectedIndexes();
+    if(indexes.isEmpty()){
+        return;
+    }
+    // 获取列表中选中的物品
+    QModelIndex index = indexes.first();
+    QString book = index.data(Qt::DisplayRole).toString();
+
+    QSqlDatabase db = QSqlDatabase::database();
+    QSqlQuery query(db);
+    query.prepare("SELECT id from book WHERE name = :name");
+    query.bindValue(":name", book);
+    query.exec();
+
+    if (query.next()) {
+        // 从数据库中获取单词本Id
+        QVariant bookId = query.value(0).toInt();
+
+        LearnWindow *learnWindow = new LearnWindow(nullptr, bookId.toInt());
+        learnWindow->setWindowTitle("单词背诵");
+        learnWindow->show();
     }
 }

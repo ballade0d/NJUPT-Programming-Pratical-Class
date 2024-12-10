@@ -12,7 +12,7 @@
 #include <QJsonObject>
 #include <QtSql>
 
-EditWindow::EditWindow(QWidget *parent, QVariant *bookId) : QDialog(parent) {
+EditWindow::EditWindow(QWidget *parent, int bookId) : QDialog(parent) {
     setModal(true);
 
     QSqlDatabase db = QSqlDatabase::database();
@@ -25,7 +25,7 @@ EditWindow::EditWindow(QWidget *parent, QVariant *bookId) : QDialog(parent) {
     QPushButton *deleteButton = new QPushButton("删除单词", this);
 
     this->wordList = new QListView(this);
-    this->bookId = bookId->toInt();
+    this->bookId = bookId;
 
     refreshList();
 
