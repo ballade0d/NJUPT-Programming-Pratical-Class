@@ -3,6 +3,7 @@
 #include "../windows/EditWindow.h"
 #include "../windows/LearnWindow.h"
 #include "../windows/SpellingWindow.h"
+#include "../windows/MultipleChoiceWindow.h"
 #include <QtSql>
 #include <QCryptographicHash>
 #include <QMessageBox>
@@ -149,8 +150,21 @@ void HomeWidget::handleReciteButton() {
         // 从数据库中获取单词本Id
         QVariant bookId = query.value(0).toInt();
 
-        SpellingWindow *reciteWindow = new SpellingWindow(nullptr, bookId.toInt());
-        reciteWindow->setWindowTitle("单词背诵");
-        reciteWindow->show();
+        QMessageBox msgBox;
+        msgBox.setWindowTitle("请选择背诵方式");
+        msgBox.setText("请选择背诵方式");
+        QPushButton *button1 = msgBox.addButton("选择题背诵", QMessageBox::ActionRole);
+        QPushButton *button2 = msgBox.addButton("拼写单词背诵", QMessageBox::ActionRole);
+        msgBox.exec();
+
+        if (msgBox.clickedButton() == button1) {
+            MultipleChoiceWindow *window = new MultipleChoiceWindow(nullptr, bookId.toInt());
+            window->setWindowTitle("单词背诵");
+            window->show();
+        } else {
+            SpellingWindow *window = new SpellingWindow(nullptr, bookId.toInt());
+            window->setWindowTitle("单词背诵");
+            window->show();
+        }
     }
 }

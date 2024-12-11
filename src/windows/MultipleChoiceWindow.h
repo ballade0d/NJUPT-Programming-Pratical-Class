@@ -19,13 +19,15 @@ private slots:
 
     void updateWordDisplay();
 
-    bool check();
+    void handleButtonClick();
 
 private:
     QList<QPair<QString, QString>> words;
     QLabel *wordLabel;
     int currentIndex = 0;
-    QHBoxLayout *choiceLayout;
+    QButtonGroup *buttonGroup;
+    QPushButton *confirmButton;
+    int correctIndex;
     QLabel *iconLabel;
 };
 

@@ -8,7 +8,9 @@ MainWindow::MainWindow(QWidget *parent) : QWidget(parent) {
 
     // 创建登录和主界面的实例
     loginWidget = new LoginWidget();
+    loginWidget->setObjectName("LoginWidget");
     homeWidget = new HomeWidget();
+    homeWidget->setObjectName("HomeWidget");
 
     stackedWidget->addWidget(loginWidget); // index=0
     stackedWidget->addWidget(homeWidget); // index=1

@@ -69,16 +69,17 @@ void SpellingWindow::handleNextButton() {
             updateWordDisplay();
             nextButton->setEnabled(true);
         } else {
-            //
+            // TODO: 显示完成窗口
         }
     });
 }
 
 bool SpellingWindow::check() {
     QString result;
+    // 遍历所有的 QLineEdit，获取其中的文本
     for (int i = 0; i < spellingLayout->count(); ++i) {
         QLayoutItem *item = spellingLayout->itemAt(i);
-        QWidget *widget = item->widget();  // 尝试获取 QLayoutItem 中的 QWidget
+        QWidget *widget = item->widget();
         if (widget) {
             QLineEdit *lineEdit = qobject_cast<QLineEdit *>(widget);
             if (lineEdit) {
