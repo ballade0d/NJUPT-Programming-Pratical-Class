@@ -8,7 +8,7 @@ class LearnWindow : public QWidget {
 Q_OBJECT
 
 public:
-    explicit LearnWindow(QWidget *parent = nullptr, int bookId = -1);
+    explicit LearnWindow(QWidget *parent, int bookId);
 
 private slots:
 

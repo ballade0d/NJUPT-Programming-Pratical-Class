@@ -15,7 +15,7 @@
 HomeWidget::HomeWidget(QWidget *parent) : QWidget(parent) {
 }
 
-void HomeWidget::setup(int userId){
+void HomeWidget::setup(int userId) {
     this->userId = userId;
     QVBoxLayout *mainLayout = new QVBoxLayout(this);
 
@@ -98,6 +98,7 @@ QPushButton:pressed {
 
     // 复习按钮
     QPushButton *reviewButton = new QPushButton("复习错题", this);
+    connect(reviewButton, &QPushButton::clicked, this, &HomeWidget::handleReviewButton);
     buttonLayout->addWidget(reviewButton, 1, 1);
 
     // 编辑按钮
@@ -137,7 +138,7 @@ int HomeWidget::getSelectedBookId() {
 }
 
 void HomeWidget::handleCalendarButton() {
-    CalendarWindow *calendarWindow = new CalendarWindow(this);
+    CalendarWindow *calendarWindow = new CalendarWindow(this, userId);
     // 设置窗口标题
     calendarWindow->setWindowTitle("每日打卡");
     // 显示窗口
@@ -177,11 +178,11 @@ void HomeWidget::handleReciteButton() {
     msgBox.exec();
 
     if (msgBox.clickedButton() == button1) {
-        MultipleChoiceWindow *window = new MultipleChoiceWindow(nullptr, bookId);
+        MultipleChoiceWindow *window = new MultipleChoiceWindow(nullptr, userId, bookId);
         window->setWindowTitle("单词背诵");
         window->show();
     } else if (msgBox.clickedButton() == button2) {
-        SpellingWindow *window = new SpellingWindow(nullptr, bookId);
+        SpellingWindow *window = new SpellingWindow(nullptr, userId, bookId);
         window->setWindowTitle("单词背诵");
         window->show();
     }
@@ -227,6 +228,35 @@ void HomeWidget::handleRecordButton() {
     recordBookWindow->setWindowTitle("错题本");
     recordBookWindow->setBaseSize(480, 320);
     recordBookWindow->show();
+}
+
+void HomeWidget::handleReviewButton() {
+    QSqlDatabase db = QSqlDatabase::database();
+    QSqlQuery query(db);
+    query.prepare("SELECT * FROM record WHERE user_id = :user_id");
+    query.bindValue(":user_id", userId);
+    query.exec();
+    if (!query.next()) {
+        QMessageBox::information(this, "提示", "错题本为空");
+        return;
+    }
+
+    QMessageBox msgBox;
+    msgBox.setWindowTitle("请选择背诵方式");
+    msgBox.setText("请选择背诵方式");
+    QPushButton *button1 = msgBox.addButton("选择题背诵", QMessageBox::ActionRole);
+    QPushButton *button2 = msgBox.addButton("拼写单词背诵", QMessageBox::ActionRole);
+    msgBox.exec();
+
+    if (msgBox.clickedButton() == button1) {
+        MultipleChoiceWindow *window = new MultipleChoiceWindow(nullptr, userId, -1);
+        window->setWindowTitle("单词背诵");
+        window->show();
+    } else if (msgBox.clickedButton() == button2) {
+        SpellingWindow *window = new SpellingWindow(nullptr, userId, -1);
+        window->setWindowTitle("单词背诵");
+        window->show();
+    }
 }
 
 void HomeWidget::refreshList() {

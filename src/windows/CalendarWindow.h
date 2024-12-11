@@ -9,7 +9,7 @@ class CalendarWindow : public QDialog {
 Q_OBJECT
 
 public:
-    explicit CalendarWindow(QWidget *parent = nullptr, int userId = -1);
+    explicit CalendarWindow(QWidget *parent, int userId);
 
 private slots:
 

@@ -10,21 +10,33 @@
 #include <QJsonObject>
 #include <QRandomGenerator>
 #include <QTimer>
+#include <QMessageBox>
 
 QStringList predefinedWrongAnswers = {"测试", "2", "3", "4", "5"};
 
-MultipleChoiceWindow::MultipleChoiceWindow(QWidget *parent, int bookId) : QWidget(parent) {
+MultipleChoiceWindow::MultipleChoiceWindow(QWidget *parent, int userId, int bookId) : QWidget(parent) {
+    this->bookId = bookId;
+    this->userId = userId;
     QSqlDatabase db = QSqlDatabase::database();
 
     QSqlQuery query(db);
-    query.prepare("SELECT word, data from book_word WHERE book_id = :book_id");
-    query.bindValue(":book_id", bookId);
+    if (bookId != -1) {
+        // 背诵单词本
+        query.prepare("SELECT id, word, data from book_word WHERE book_id = :book_id");
+        query.bindValue(":book_id", bookId);
+    } else {
+        // 背诵错题本
+        query.prepare(
+                "SELECT bw.id, bw.word, bw.data from record r JOIN book_word bw ON r.word_id = bw.id WHERE r.user_id = :user_id");
+        query.bindValue(":user_id", userId);
+    }
     query.exec();
 
     while (query.next()) {
-        QString word = query.value(0).toString();
-        QString data = query.value(1).toString();
-        words.append(qMakePair(word, data));
+        int id = query.value(0).toInt();
+        QString word = query.value(1).toString();
+        QString data = query.value(2).toString();
+        words.append(std::make_tuple(id, word, data));
     }
 
     // 创建一个垂直布局
@@ -76,12 +88,11 @@ MultipleChoiceWindow::MultipleChoiceWindow(QWidget *parent, int bookId) : QWidge
     }
 }
 
-
 void MultipleChoiceWindow::updateWordDisplay() {
     if (currentIndex >= 0 && currentIndex < words.size()) {
-        QString word = words[currentIndex].first;
+        QString word = std::get<1>(words[currentIndex]);
         wordLabel->setText(word);
-        QString jsonData = words[currentIndex].second;
+        QString jsonData = std::get<2>(words[currentIndex]);
         QJsonDocument doc = QJsonDocument::fromJson(jsonData.toUtf8());
         QJsonObject obj = doc.object();
         QString answer = obj.find("释义")->toString();
@@ -106,7 +117,7 @@ void MultipleChoiceWindow::updateWordDisplay() {
             indices.removeAt(randomIndex);  // 移除已选择的索引，防止重复选择
 
             // 解析JSON获取释义
-            QString waJsonData = words[selectedIndex].second;
+            QString waJsonData = std::get<2>(words[selectedIndex]);
             QJsonDocument waDoc = QJsonDocument::fromJson(waJsonData.toUtf8());
             QJsonObject waObj = waDoc.object();
             QString wrongAnswer = waObj.value("释义").toString();
@@ -142,10 +153,32 @@ void MultipleChoiceWindow::handleButtonClick() {
         QPixmap pixmap;
         if (i == correctIndex) {
             pixmap = QPixmap(":/correct.svg");
-            correctAnswers.append(words[currentIndex].first);
+            correctAnswers.append(std::get<1>(words[currentIndex]));
+
+            if (bookId == -1){
+                // 从错题本中删除
+                QSqlDatabase db = QSqlDatabase::database();
+                QSqlQuery query(db);
+                query.prepare("DELETE FROM record WHERE user_id = :user_id AND word_id = :word_id");
+                query.bindValue(":user_id", userId);
+                query.bindValue(":word_id", std::get<0>(words[currentIndex]));
+                query.exec();
+            }
         } else {
             pixmap = QPixmap(":/incorrect.svg");
-            wrongAnswers.append(words[currentIndex].first);
+            wrongAnswers.append(std::get<1>(words[currentIndex]));
+
+            // 已在错题本的不再添加
+            if (bookId != -1) {
+                // 添加到错题本
+                QSqlDatabase db = QSqlDatabase::database();
+                QSqlQuery query(db);
+                query.prepare("INSERT INTO record(user_id, book_id, word_id) VALUES (:user_id, :book_id, :word_id)");
+                query.bindValue(":user_id", userId);
+                query.bindValue(":book_id", bookId);
+                query.bindValue(":word_id", std::get<0>(words[currentIndex]));
+                query.exec();
+            }
         }
         pixmap = pixmap.scaled(20, 20, Qt::KeepAspectRatio);
         iconLabel->setPixmap(pixmap);

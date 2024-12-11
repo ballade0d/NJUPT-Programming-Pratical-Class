@@ -13,7 +13,7 @@ class SpellingWindow : public QWidget {
 Q_OBJECT
 
 public:
-    explicit SpellingWindow(QWidget *parent = nullptr, int bookId = -1);
+    explicit SpellingWindow(QWidget *parent, int userId, int bookId);
 
 private slots:
 
@@ -24,7 +24,9 @@ private slots:
     bool check();
 
 private:
-    QList<QPair<QString, QString>> words;
+    int bookId;
+    int userId;
+    QList<std::tuple<int, QString, QString>> words;
     QLabel *wordLabel;
     int currentIndex = 0;
     QHBoxLayout *spellingLayout;

@@ -13,7 +13,7 @@ class MultipleChoiceWindow : public QWidget {
 Q_OBJECT
 
 public:
-    explicit MultipleChoiceWindow(QWidget *parent = nullptr, int bookId = -1);
+    explicit MultipleChoiceWindow(QWidget *parent, int userId, int bookId);
 
 private slots:
 
@@ -22,7 +22,9 @@ private slots:
     void handleButtonClick();
 
 private:
-    QList<QPair<QString, QString>> words;
+    int bookId;
+    int userId;
+    QList<std::tuple<int, QString, QString>> words;
     QLabel *wordLabel;
     int currentIndex = 0;
     QButtonGroup *buttonGroup;

@@ -9,7 +9,7 @@ class RecordBookWindow : public QWidget {
 Q_OBJECT
 
 public:
-    explicit RecordBookWindow(QWidget *parent = nullptr, int userId = -1);
+    explicit RecordBookWindow(QWidget *parent, int userId);
 
 private slots:
 

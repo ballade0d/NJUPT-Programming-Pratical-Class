@@ -8,9 +8,9 @@ class SettlementWindow : public QWidget {
     Q_OBJECT
 
 public:
-    explicit SettlementWindow(QWidget *parent = nullptr,
-                              QList<QString> correctAnswers = {},
-                              QList<QString> wrongAnswers = {});
+    explicit SettlementWindow(QWidget *parent,
+                              QList<QString> correctAnswers,
+                              QList<QString> wrongAnswers);
 
 private slots:
 

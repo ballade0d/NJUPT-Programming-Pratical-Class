@@ -10,7 +10,7 @@ class EditWindow : public QDialog {
 Q_OBJECT
 
 public:
-    explicit EditWindow(QWidget *parent = nullptr, int bookId = -1);
+    explicit EditWindow(QWidget *parent, int bookId);
 
 private slots:
 

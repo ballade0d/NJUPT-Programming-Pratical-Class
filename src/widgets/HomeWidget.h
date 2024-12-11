@@ -30,6 +30,7 @@ private slots:
     void handleAddButton();
     void handleDeleteButton();
     void handleRecordButton();
+    void handleReviewButton();
     void refreshList();
 
 private:

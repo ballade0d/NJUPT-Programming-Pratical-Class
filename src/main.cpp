@@ -101,7 +101,7 @@ int main(int argc, char *argv[]) {
         }
     }
 
-    MainWindow w;
+    MainWindow w(nullptr);
     w.setFixedSize(480, 640);
     w.show();
     return a.exec();
