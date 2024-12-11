@@ -106,25 +106,26 @@ QString encryptPassword(const QString &password) {
     return hashedPassword;
 }
 
-bool checkPassword(const QString &username, const QString &password) {
+int checkPassword(const QString &username, const QString &password) {
     QSqlDatabase db = QSqlDatabase::database();  // 获取数据库连接
     QSqlQuery query(db);
 
     // 使用预处理语句防止SQL注入
-    query.prepare("SELECT password FROM user_password WHERE username = :username");
+    query.prepare("SELECT id, password FROM user_password WHERE username = :username");
     query.bindValue(":username", username);
     query.exec();
 
     if (query.next()) {
+        QVariant id = query.value(0);
         // 从数据库中获取加密的密码
-        QString storedPassword = query.value(0).toString();
+        QString storedPassword = query.value(1).toString();
 
         // 与数据库中的加密密码进行比较
         if (encryptPassword(password) == storedPassword) {
-            return true;
+            return id.toInt();
         }
     }
-    return false;
+    return -1;
 }
 
 void LoginWidget::handleLoginButton() {
@@ -132,9 +133,11 @@ void LoginWidget::handleLoginButton() {
     const QString username = usernameLineEdit->text();
     const QString password = passwordLineEdit->text();
 
-    if (checkPassword(username, password)) {
+    int id = checkPassword(username, password);
+
+    if (id != -1) {
         QMessageBox::information(nullptr, "信息", "登陆成功！");
-        emit loginSuccessful();
+        emit loginSuccessful(id);
     } else {
         QMessageBox::critical(nullptr, "错误", "用户名或密码错误！");
     }
@@ -169,8 +172,7 @@ void LoginWidget::handleRegisterButton() {
         query.bindValue(":password", encryptPassword(password));
 
         if (query.exec()) {
-            QMessageBox::information(nullptr, "信息", "注册成功！");
-            emit loginSuccessful();
+            QMessageBox::information(nullptr, "信息", "注册成功！请登录");
         }
     }
 }

@@ -9,7 +9,7 @@ class CalendarWindow : public QDialog {
 Q_OBJECT
 
 public:
-    explicit CalendarWindow(QWidget *parent = nullptr);
+    explicit CalendarWindow(QWidget *parent = nullptr, int userId = -1);
 
 private slots:
 
@@ -19,6 +19,7 @@ private slots:
     bool isTodayCheckedIn(); // 判断今日是否打卡
 
 private:
+    int userId;
     QCalendarWidget *calendar;
 };
 

@@ -1,6 +1,6 @@
 #include "EditWindow.h"
-#include "WordAddDialog.h"
-#include "WordEditDialog.h"
+#include "../dialog/WordAddDialog.h"
+#include "../dialog/WordEditDialog.h"
 #include <QSqlDatabase>
 #include <QSqlQuery>
 #include <QPushButton>
@@ -73,15 +73,14 @@ void EditWindow::handleEditButton() {
         QJsonDocument doc = QJsonDocument::fromJson(data.toUtf8());
         QString formattedJson = doc.toJson(QJsonDocument::Indented);
 
-        bool ok;
-        WordEditDialog dialog(tr("单词编辑"), tr("请编辑:"), formattedJson, this);
+        WordEditDialog dialog(formattedJson, this);
         QString newText;
         if (dialog.exec() == QDialog::Accepted) {
             newText = dialog.getText();
             // 解析用户编辑后的 JSON
-            QJsonDocument doc = QJsonDocument::fromJson(newText.toUtf8());
+            QJsonDocument newDoc = QJsonDocument::fromJson(newText.toUtf8());
             // 将 JSON 转换为紧凑格式
-            QString unbeautifiedJson = doc.toJson(QJsonDocument::Compact);
+            QString unbeautifiedJson = newDoc.toJson(QJsonDocument::Compact);
             // 更新数据到数据库
             QSqlQuery updateQuery(db);
             updateQuery.prepare("UPDATE book_word SET data = :data WHERE word = :word AND book_id = :book_id");
@@ -96,13 +95,10 @@ void EditWindow::handleEditButton() {
 void EditWindow::handleAddButton() {
     QSqlDatabase db = QSqlDatabase::database();
 
-    bool ok;
-    WordAddDialog dialog(tr("新增单词"), tr("请编辑:"), this);
-    QString newWord;
-    QString newText;
+    WordAddDialog dialog(this);
     if (dialog.exec() == QDialog::Accepted) {
-        newWord = dialog.getWord();
-        newText = dialog.getText();
+        QString newWord = dialog.getWord();
+        QString newText = dialog.getText();
         // 解析用户编辑后的 JSON
         QJsonDocument doc = QJsonDocument::fromJson(newText.toUtf8());
         // 将 JSON 转换为紧凑格式
@@ -152,5 +148,5 @@ void EditWindow::refreshList() {
         wordList->setModel(model);
     }
 
-    static_cast<QSqlQueryModel *>(wordList->model())->setQuery(query);
+    dynamic_cast<QSqlQueryModel *>(wordList->model())->setQuery(query);
 }

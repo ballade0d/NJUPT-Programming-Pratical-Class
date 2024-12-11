@@ -9,13 +9,13 @@ class WordEditDialog : public QDialog {
 Q_OBJECT
 
 public:
-    explicit WordEditDialog(const QString &title, const QString &labelText, const QString &defaultValue,
+    explicit WordEditDialog(const QString &defaultValue,
                             QWidget *parent = nullptr)
             : QDialog(parent), textValue(defaultValue) {
-        setWindowTitle(title);
+        setWindowTitle("单词编辑");
 
         QVBoxLayout *mainLayout = new QVBoxLayout(this);
-        QLabel *label = new QLabel(labelText);
+        QLabel *label = new QLabel("请编辑：");
         mainLayout->addWidget(label);
 
         textEdit = new QTextEdit(this);

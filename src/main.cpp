@@ -40,6 +40,7 @@ int main(int argc, char *argv[]) {
         bool queryResult = query.exec(
                 "CREATE TABLE IF NOT EXISTS check_in ("
                 "id INTEGER PRIMARY KEY AUTOINCREMENT, "
+                "user_id INTEGER NOT NULL, "
                 "date DATETIME NOT NULL)"
         );
         if (queryResult) {
@@ -55,6 +56,7 @@ int main(int argc, char *argv[]) {
         bool queryResult = query.exec(
                 "CREATE TABLE IF NOT EXISTS book ("
                 "id INTEGER PRIMARY KEY AUTOINCREMENT, "
+                "user_id INTEGER NOT NULL, "
                 "name TEXT NOT NULL)"
         );
         if (queryResult) {
@@ -87,6 +89,7 @@ int main(int argc, char *argv[]) {
         bool queryResult = query.exec(
                 "CREATE TABLE IF NOT EXISTS record ("
                 "id INTEGER PRIMARY KEY AUTOINCREMENT, "
+                "user_id INTEGER NOT NULL, "
                 "book_id INTEGER NOT NULL, "
                 "word_id INTEGER NOT NULL)"
         );

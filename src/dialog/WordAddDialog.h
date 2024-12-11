@@ -19,15 +19,16 @@ class WordAddDialog : public QDialog {
 Q_OBJECT
 
 public:
-    explicit WordAddDialog(const QString &title, const QString &labelText, QWidget *parent = nullptr)
+    explicit WordAddDialog(QWidget *parent = nullptr)
             : QDialog(parent) {
-        setWindowTitle(title);
+        setWindowTitle("新增单词");
 
         QVBoxLayout *mainLayout = new QVBoxLayout(this);
-        QLabel *label = new QLabel(labelText);
+        QLabel *label = new QLabel("请编辑：");
         mainLayout->addWidget(label);
 
         lineEdit = new QLineEdit(this);
+        lineEdit->setPlaceholderText("请输入单词");
         mainLayout->addWidget(lineEdit);
 
         textEdit = new QTextEdit(this);

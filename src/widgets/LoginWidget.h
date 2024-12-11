@@ -16,7 +16,7 @@ public:
 
 signals:
 
-    void loginSuccessful();  // 发送登录成功的信号
+    void loginSuccessful(int userId);  // 发送登录成功的信号
 
 private slots:
 

@@ -13,25 +13,32 @@ find_package(Qt6 REQUIRED COMPONENTS Widgets Sql)
 
 set(PROJECT_SOURCES
         src/main.cpp
+        src/windows/RecordBookWindow.h
+        src/windows/RecordBookWindow.cpp
 )
 
 qt_add_executable(${PROJECT_NAME}
         MANUAL_FINALIZATION
         ${PROJECT_SOURCES}
-        src/windows/MainWindow.h src/windows/MainWindow.cpp
+        src/dialog/WordEditDialog.h
+        src/dialog/WordAddDialog.h
+        src/dialog/BookAddDialog.h
+        src/dialog/BookDeleteDialog.h
+
         src/widgets/LoginWidget.h src/widgets/LoginWidget.cpp
-
-        resource/resource.qrc
-
         src/widgets/HomeWidget.h src/widgets/HomeWidget.cpp
+
+        src/windows/MainWindow.h src/windows/MainWindow.cpp
+
+        src/windows/recite/MultipleChoiceWindow.h src/windows/recite/MultipleChoiceWindow.cpp
+        src/windows/recite/SpellingWindow.h src/windows/recite/SpellingWindow.cpp
+
         src/windows/CalendarWindow.h src/windows/CalendarWindow.cpp
         src/windows/EditWindow.h src/windows/EditWindow.cpp
-        src/windows/WordEditDialog.h
-        src/windows/WordAddDialog.h
-
         src/windows/LearnWindow.h src/windows/LearnWindow.cpp
-        src/windows/MultipleChoiceWindow.h src/windows/MultipleChoiceWindow.cpp
-        src/windows/SpellingWindow.h src/windows/SpellingWindow.cpp
+        src/windows/RecordBookWindow.h src/windows/RecordBookWindow.cpp
+
+        resource/resource.qrc
 
 )
 

@@ -15,13 +15,14 @@ MainWindow::MainWindow(QWidget *parent) : QWidget(parent) {
     stackedWidget->addWidget(loginWidget); // index=0
     stackedWidget->addWidget(homeWidget); // index=1
 
-    QVBoxLayout *layout = new QVBoxLayout;
+    QVBoxLayout *layout = new QVBoxLayout();
     layout->addWidget(stackedWidget);
     setLayout(layout);
 
     // 监听登陆成功，切换到主界面
-    connect(loginWidget, &LoginWidget::loginSuccessful, this, [this]() {
-        stackedWidget->setCurrentIndex(1);
+    connect(loginWidget, &LoginWidget::loginSuccessful, this, [this](int userId) {
+        homeWidget->setup(userId);     // 初始化 homeWidget
+        stackedWidget->setCurrentIndex(1); // 切换到主界面
     });
 }
 

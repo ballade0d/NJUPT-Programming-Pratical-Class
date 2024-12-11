@@ -5,8 +5,10 @@
 #include <QPushButton>
 #include <QMessageBox>
 
-CalendarWindow::CalendarWindow(QWidget *parent) : QDialog(parent) {
+CalendarWindow::CalendarWindow(QWidget *parent, int userId) : QDialog(parent) {
     setModal(true);
+    this->userId = userId;
+
     calendar = new QCalendarWidget(this);
     calendar->setGridVisible(true);
 
@@ -29,7 +31,7 @@ void CalendarWindow::loadCheckIns() {
     QSqlDatabase db = QSqlDatabase::database();
     QSqlQuery query(db);
 
-    query.exec("SELECT date FROM check_in ORDER BY date DESC");
+    query.exec("SELECT date FROM check_in WHERE user_id = " + QString::number(userId));
 
     QTextCharFormat format;
     format.setBackground(Qt::green);  // 已打卡日期的显示格式
@@ -45,7 +47,8 @@ bool CalendarWindow::checkIn() {
     QSqlQuery query(db);
     QDateTime currentTime = QDateTime::currentDateTime();
 
-    query.prepare("INSERT INTO check_in (date) VALUES (:date)");
+    query.prepare("INSERT INTO check_in (user_id, date) VALUES (:user_id, :date)");
+    query.bindValue(":user_id", userId);
     query.bindValue(":date", currentTime.toString("yyyy-MM-dd"));
     query.exec();
 
@@ -57,7 +60,8 @@ bool CalendarWindow::isTodayCheckedIn() {
     QSqlQuery query(db);
     QDate today = QDate::currentDate();
 
-    query.prepare("SELECT COUNT(*) FROM check_in WHERE date(date) = :today");
+    query.prepare("SELECT COUNT(*) FROM check_in WHERE date(date) = :today AND user_id = :user_id");
+    query.bindValue(":user_id", userId);
     query.bindValue(":today", today.toString("yyyy-MM-dd"));
     query.exec();
 
