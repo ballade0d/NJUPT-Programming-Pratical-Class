@@ -29,6 +29,8 @@ private:
     QPushButton *confirmButton;
     int correctIndex;
     QLabel *iconLabel;
+    QList<QString> correctAnswers;
+    QList<QString> wrongAnswers;
 };
 
 #endif // MULTIPLECHOICEWINDOW_H

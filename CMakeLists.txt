@@ -9,7 +9,7 @@ set(CMAKE_AUTORCC ON)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-find_package(Qt6 REQUIRED COMPONENTS Widgets Sql)
+find_package(Qt6 REQUIRED COMPONENTS Widgets Sql Charts)
 
 set(PROJECT_SOURCES
         src/main.cpp
@@ -32,6 +32,7 @@ qt_add_executable(${PROJECT_NAME}
 
         src/windows/recite/MultipleChoiceWindow.h src/windows/recite/MultipleChoiceWindow.cpp
         src/windows/recite/SpellingWindow.h src/windows/recite/SpellingWindow.cpp
+        src/windows/recite/SettlementWindow.h src/windows/recite/SettlementWindow.cpp
 
         src/windows/CalendarWindow.h src/windows/CalendarWindow.cpp
         src/windows/EditWindow.h src/windows/EditWindow.cpp
@@ -43,4 +44,4 @@ qt_add_executable(${PROJECT_NAME}
 )
 
 # Link Qt and SQL
-target_link_libraries(${PROJECT_NAME} PRIVATE Qt6::Widgets Qt6::Sql)
+target_link_libraries(${PROJECT_NAME} PRIVATE Qt6::Widgets Qt6::Sql Qt6::Charts)

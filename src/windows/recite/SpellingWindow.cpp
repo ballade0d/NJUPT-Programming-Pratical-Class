@@ -1,4 +1,5 @@
 #include "SpellingWindow.h"
+#include "SettlementWindow.h"
 #include <QDialog>
 #include <QVBoxLayout>
 #include <QSqlDatabase>
@@ -53,9 +54,10 @@ void SpellingWindow::handleNextButton() {
     QPixmap pixmap;
     if (check()) {
         pixmap = QPixmap(":/correct.svg");
+        correctAnswers.append(words[currentIndex].first);
     } else {
         pixmap = QPixmap(":/incorrect.svg");
-        wordLabel->setText(words[currentIndex].first);
+        wrongAnswers.append(words[currentIndex].first);
     }
     pixmap = pixmap.scaled(20, 20, Qt::KeepAspectRatio);
     iconLabel->setPixmap(pixmap);
@@ -69,7 +71,11 @@ void SpellingWindow::handleNextButton() {
             updateWordDisplay();
             nextButton->setEnabled(true);
         } else {
-            // TODO: 显示完成窗口
+            this->close();
+            SettlementWindow *settlementWindow = new SettlementWindow(nullptr, correctAnswers, wrongAnswers);
+            settlementWindow->setWindowTitle("结果");
+            settlementWindow->setBaseSize(640, 320);
+            settlementWindow->show();
         }
     });
 }

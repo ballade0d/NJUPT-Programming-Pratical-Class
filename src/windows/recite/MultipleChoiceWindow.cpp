@@ -1,4 +1,5 @@
 #include "MultipleChoiceWindow.h"
+#include "SettlementWindow.h"
 
 #include <QSqlDatabase>
 #include <QSqlQuery>
@@ -141,8 +142,10 @@ void MultipleChoiceWindow::handleButtonClick() {
         QPixmap pixmap;
         if (i == correctIndex) {
             pixmap = QPixmap(":/correct.svg");
+            correctAnswers.append(words[currentIndex].first);
         } else {
             pixmap = QPixmap(":/incorrect.svg");
+            wrongAnswers.append(words[currentIndex].first);
         }
         pixmap = pixmap.scaled(20, 20, Qt::KeepAspectRatio);
         iconLabel->setPixmap(pixmap);
@@ -156,7 +159,11 @@ void MultipleChoiceWindow::handleButtonClick() {
                 updateWordDisplay();
                 confirmButton->setEnabled(true);
             } else {
-
+                this->close();
+                SettlementWindow *settlementWindow = new SettlementWindow(nullptr, correctAnswers, wrongAnswers);
+                settlementWindow->setWindowTitle("结果");
+                settlementWindow->setBaseSize(640, 320);
+                settlementWindow->show();
             }
         });
         break;

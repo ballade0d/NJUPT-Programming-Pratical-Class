@@ -30,6 +30,8 @@ private:
     QHBoxLayout *spellingLayout;
     QLabel *iconLabel;
     QPushButton *nextButton;
+    QList<QString> correctAnswers;
+    QList<QString> wrongAnswers;
 };
 
 // 退格监听
