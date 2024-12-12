@@ -224,6 +224,16 @@ void HomeWidget::handleDeleteButton() {
 }
 
 void HomeWidget::handleRecordButton() {
+    QSqlDatabase db = QSqlDatabase::database();
+    QSqlQuery query(db);
+    query.prepare("SELECT * FROM record WHERE user_id = :user_id");
+    query.bindValue(":user_id", userId);
+    query.exec();
+    if (!query.next()) {
+        QMessageBox::information(this, "提示", "错题本为空");
+        return;
+    }
+
     RecordBookWindow *recordBookWindow = new RecordBookWindow(nullptr, userId);
     recordBookWindow->setWindowTitle("错题本");
     recordBookWindow->setBaseSize(480, 320);

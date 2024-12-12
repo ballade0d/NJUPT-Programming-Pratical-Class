@@ -10,7 +10,6 @@
 #include <QJsonObject>
 #include <QRandomGenerator>
 #include <QTimer>
-#include <QMessageBox>
 
 QStringList predefinedWrongAnswers = {"测试", "2", "3", "4", "5"};
 
@@ -155,7 +154,7 @@ void MultipleChoiceWindow::handleButtonClick() {
             pixmap = QPixmap(":/correct.svg");
             correctAnswers.append(std::get<1>(words[currentIndex]));
 
-            if (bookId == -1){
+            if (bookId == -1) {
                 // 从错题本中删除
                 QSqlDatabase db = QSqlDatabase::database();
                 QSqlQuery query(db);

@@ -162,6 +162,11 @@ void LoginWidget::handleRegisterButton() {
     const QString username = usernameLineEdit->text();
     const QString password = passwordLineEdit->text();
 
+    if (username.length() < 3 || password.length() < 6) {
+        QMessageBox::critical(nullptr, "错误", "密码长度不能小于6位！");
+        return;
+    }
+
     QSqlDatabase db = QSqlDatabase::database();
     if (checkIfUserExists(username, db)) {
         QMessageBox::critical(nullptr, "错误", "用户名已存在，请登陆！");

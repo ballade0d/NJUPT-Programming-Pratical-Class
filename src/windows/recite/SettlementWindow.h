@@ -5,7 +5,7 @@
 #include <QStyledItemDelegate>
 
 class SettlementWindow : public QWidget {
-    Q_OBJECT
+Q_OBJECT
 
 public:
     explicit SettlementWindow(QWidget *parent,

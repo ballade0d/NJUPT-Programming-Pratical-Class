@@ -10,7 +10,6 @@
 #include <QLineEdit>
 #include <QTimer>
 #include <QSqlError>
-#include <QMessageBox>
 
 SpellingWindow::SpellingWindow(QWidget *parent, int userId, int bookId) : QWidget(parent) {
     this->bookId = bookId;
@@ -69,7 +68,7 @@ void SpellingWindow::handleNextButton() {
         pixmap = QPixmap(":/correct.svg");
         correctAnswers.append(std::get<1>(words[currentIndex]));
 
-        if (bookId == -1){
+        if (bookId == -1) {
             // 从错题本中删除
             QSqlDatabase db = QSqlDatabase::database();
             QSqlQuery query(db);
