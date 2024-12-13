@@ -3,10 +3,11 @@
 
 #include <QWidget>
 #include <QStackedWidget>
+#include <QMainWindow>
 #include "../widgets/LoginWidget.h"
 #include "../widgets/HomeWidget.h"
 
-class MainWindow : public QWidget {
+class MainWindow : public QMainWindow {
 Q_OBJECT
 
 public:

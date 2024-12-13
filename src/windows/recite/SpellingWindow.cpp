@@ -90,16 +90,23 @@ void SpellingWindow::handleNextButton() {
         pixmap = QPixmap(":/incorrect.svg");
         wrongAnswers.append(std::get<1>(words[currentIndex]));
 
-        // 已在错题本的不再添加
         if (bookId != -1) {
-            // 添加到错题本
             QSqlDatabase db = QSqlDatabase::database();
+
             QSqlQuery query(db);
-            query.prepare("INSERT INTO record(user_id, book_id, word_id) VALUES (:user_id, :book_id, :word_id)");
+            // 已在错题本的不再添加
+            query.prepare("SELECT * FROM record WHERE user_id = :user_id AND word_id = :word_id");
             query.bindValue(":user_id", userId);
-            query.bindValue(":book_id", bookId);
             query.bindValue(":word_id", std::get<0>(words[currentIndex]));
             query.exec();
+            if (!query.next()) {
+                // 添加到错题本
+                query.prepare("INSERT INTO record(user_id, book_id, word_id) VALUES (:user_id, :book_id, :word_id)");
+                query.bindValue(":user_id", userId);
+                query.bindValue(":book_id", bookId);
+                query.bindValue(":word_id", std::get<0>(words[currentIndex]));
+                query.exec();
+            }
         }
     }
     pixmap = pixmap.scaled(20, 20, Qt::KeepAspectRatio);
