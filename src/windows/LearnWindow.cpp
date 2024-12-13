@@ -7,6 +7,11 @@
 #include <QJsonDocument>
 #include <QJsonObject>
 
+/**
+ * @brief LearnWindow 学习单词窗口
+ * @param parent 父窗口
+ * @param bookId 书籍 ID
+ */
 LearnWindow::LearnWindow(QWidget *parent, int bookId) : QWidget(parent) {
     QSqlDatabase db = QSqlDatabase::database();
 
@@ -45,6 +50,9 @@ LearnWindow::LearnWindow(QWidget *parent, int bookId) : QWidget(parent) {
     }
 }
 
+/**
+ * @brief 显示上一个单词
+ */
 void LearnWindow::showPreviousWord() {
     if (currentIndex > 0) {
         currentIndex--;
@@ -52,6 +60,9 @@ void LearnWindow::showPreviousWord() {
     }
 }
 
+/**
+ * @brief 显示下一个单词
+ */
 void LearnWindow::showNextWord() {
     if (currentIndex < words.size() - 1) {
         currentIndex++;
@@ -59,6 +70,9 @@ void LearnWindow::showNextWord() {
     }
 }
 
+/**
+ * @brief 更新单词信息展示
+ */
 void LearnWindow::updateWordDisplay() {
     if (currentIndex >= 0 && currentIndex < words.size()) {
         QString word = words[currentIndex].first;

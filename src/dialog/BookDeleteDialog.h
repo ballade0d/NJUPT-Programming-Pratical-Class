@@ -9,6 +9,10 @@
 class BookDeleteDialog : public QDialog {
 Q_OBJECT
 
+    /**
+     * @brief BookDeleteDialog 删除单词本对话框
+     * @param parent 父窗口
+     */
 public:
     explicit BookDeleteDialog(QWidget *parent = nullptr)
             : QDialog(parent) {

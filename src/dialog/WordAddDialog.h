@@ -18,6 +18,10 @@
 class WordAddDialog : public QDialog {
 Q_OBJECT
 
+    /**
+     * @brief WordAddDialog 新增单词对话框
+     * @param parent 父窗口
+     */
 public:
     explicit WordAddDialog(QWidget *parent = nullptr)
             : QDialog(parent) {

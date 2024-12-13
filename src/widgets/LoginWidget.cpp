@@ -3,27 +3,35 @@
 #include <QCryptographicHash>
 #include <QMessageBox>
 
+/**
+ * @brief LoginWidget 登陆窗口
+ * @param parent 父窗口
+ */
 LoginWidget::LoginWidget(QWidget *parent) : QWidget(parent) {
     // 创建用户名输入框
     usernameLineEdit = new QLineEdit(this);
-    usernameLineEdit->setGeometry((480 - 200) / 2, 200, 200, 32); // 居中对齐, 并留出足够空间
+    // 居中对齐, 并留出足够空间
+    usernameLineEdit->setGeometry((480 - 200) / 2, 200, 200, 32);
     usernameLineEdit->setPlaceholderText("用户名");
 
     // 创建密码输入框
     passwordLineEdit = new QLineEdit(this);
     passwordLineEdit->setEchoMode(QLineEdit::Password);
-    passwordLineEdit->setGeometry((480 - 200) / 2, 200 + 40, 200, 32); // 紧接用户名输入框
+    // 紧接用户名输入框
+    passwordLineEdit->setGeometry((480 - 200) / 2, 200 + 40, 200, 32);
     passwordLineEdit->setPlaceholderText("密码");
 
     // 创建登陆按钮
     QPushButton *loginButton = new QPushButton(this);
-    loginButton->setGeometry((480 - 100) / 2, 200 + 40 + 40, 100, 32); // 位于密码输入框下方
+    // 位于密码输入框下方
+    loginButton->setGeometry((480 - 100) / 2, 200 + 40 + 40, 100, 32);
     loginButton->setText("登陆");
     loginButton->setObjectName("loginButton");
 
     // 创建注册按钮
     QPushButton *registerButton = new QPushButton(this);
-    registerButton->setGeometry((480 - 150) / 2, 200 + 40 + 40 + 40, 150, 32); // 位于登录按钮下方
+    // 位于登录按钮下方
+    registerButton->setGeometry((480 - 150) / 2, 200 + 40 + 40 + 40, 150, 32);
     registerButton->setText("新用户注册");
     registerButton->setObjectName("registerButton");
 

@@ -11,8 +11,15 @@
 #include <QRandomGenerator>
 #include <QTimer>
 
+// 预定义错误答案
 QStringList predefinedWrongAnswers = {"测试", "2", "3", "4", "5"};
 
+/**
+ * @brief MultipleChoiceWindow 选择题窗口
+ * @param parent 父窗口
+ * @param userId 用户ID
+ * @param bookId 单词本ID；若为-1，则表示背诵错题本
+ */
 MultipleChoiceWindow::MultipleChoiceWindow(QWidget *parent, int userId, int bookId) : QWidget(parent) {
     this->bookId = bookId;
     this->userId = userId;
@@ -87,6 +94,9 @@ MultipleChoiceWindow::MultipleChoiceWindow(QWidget *parent, int userId, int book
     }
 }
 
+/**
+ * @brief 更新单词显示
+ */
 void MultipleChoiceWindow::updateWordDisplay() {
     if (currentIndex >= 0 && currentIndex < words.size()) {
         QString word = std::get<1>(words[currentIndex]);
@@ -143,6 +153,9 @@ void MultipleChoiceWindow::updateWordDisplay() {
     }
 }
 
+/**
+ * @brief 处理按钮点击事件
+ */
 void MultipleChoiceWindow::handleButtonClick() {
     QList<QAbstractButton *> buttons = buttonGroup->buttons();
     for (int i = 0; i < buttons.size(); ++i) {
@@ -185,12 +198,15 @@ void MultipleChoiceWindow::handleButtonClick() {
 
         // 等待1500ms
         QTimer::singleShot(1500, this, [this]() {
-            iconLabel->clear();  // 清除图标
+            // 清除图标
+            iconLabel->clear();
             if (currentIndex < words.size() - 1) {
+                // 显示下一个单词
                 currentIndex++;
                 updateWordDisplay();
                 confirmButton->setEnabled(true);
             } else {
+                // 显示结果
                 this->close();
                 SettlementWindow *settlementWindow = new SettlementWindow(nullptr, correctAnswers, wrongAnswers);
                 settlementWindow->setWindowTitle("结果");

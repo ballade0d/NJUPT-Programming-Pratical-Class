@@ -5,6 +5,11 @@
 #include <QPushButton>
 #include <QMessageBox>
 
+/**
+ * @brief CalendarWindow 打卡日历窗口
+ * @param parent 父窗口
+ * @param userId 用户ID
+ */
 CalendarWindow::CalendarWindow(QWidget *parent, int userId) : QDialog(parent) {
     setModal(true);
     this->userId = userId;
@@ -27,6 +32,9 @@ CalendarWindow::CalendarWindow(QWidget *parent, int userId) : QDialog(parent) {
     connect(checkInButton, &QPushButton::clicked, this, &CalendarWindow::handleCheckInButton);
 }
 
+/**
+ * @brief loadCheckIns 加载用户的打卡记录
+ */
 void CalendarWindow::loadCheckIns() {
     QSqlDatabase db = QSqlDatabase::database();
     QSqlQuery query(db);
@@ -42,7 +50,10 @@ void CalendarWindow::loadCheckIns() {
     }
 }
 
-bool CalendarWindow::checkIn() {
+/**
+ * @brief checkIn 打卡
+ */
+void CalendarWindow::checkIn() {
     QSqlDatabase db = QSqlDatabase::database();
     QSqlQuery query(db);
     QDateTime currentTime = QDateTime::currentDateTime();
@@ -51,10 +62,12 @@ bool CalendarWindow::checkIn() {
     query.bindValue(":user_id", userId);
     query.bindValue(":date", currentTime.toString("yyyy-MM-dd"));
     query.exec();
-
-    return true;
 }
 
+/**
+ * @brief isTodayCheckedIn 判断今日是否已打卡
+ * @return
+ */
 bool CalendarWindow::isTodayCheckedIn() {
     QSqlDatabase db = QSqlDatabase::database();
     QSqlQuery query(db);
@@ -71,16 +84,18 @@ bool CalendarWindow::isTodayCheckedIn() {
     return false;
 }
 
+/**
+ * @brief handleCheckInButton 处理打卡按钮点击事件
+ */
 void CalendarWindow::handleCheckInButton() {
-    if (checkIn()) {
-        QPushButton *button = qobject_cast<QPushButton *>(sender());
-        button->setText("今日已打卡");
-        button->setEnabled(false); // 禁用按钮
+    checkIn();
+    QPushButton *button = qobject_cast<QPushButton *>(sender());
+    button->setText("今日已打卡");
+    button->setEnabled(false); // 禁用按钮
 
-        // 更新日历视图以显示新的签到日期
-        QTextCharFormat format;
-        format.setBackground(Qt::green);
-        calendar->setDateTextFormat(QDateTime::currentDateTime().date(), format);
-        QMessageBox::information(this, "每日打卡", "已成功打卡！");
-    }
+    // 更新日历视图以显示新的签到日期
+    QTextCharFormat format;
+    format.setBackground(Qt::green);
+    calendar->setDateTextFormat(QDateTime::currentDateTime().date(), format);
+    QMessageBox::information(this, "每日打卡", "已成功打卡！");
 }

@@ -10,6 +10,11 @@
 #include <QJsonObject>
 #include <QtSql>
 
+/**
+ * @brief EditWindow 编辑单词本窗口
+ * @param parent 父窗口
+ * @param bookId 书籍 ID
+ */
 EditWindow::EditWindow(QWidget *parent, int bookId) : QDialog(parent) {
     setModal(true);
 
@@ -51,6 +56,9 @@ EditWindow::EditWindow(QWidget *parent, int bookId) : QDialog(parent) {
     connect(deleteButton, &QPushButton::clicked, this, &EditWindow::handleDeleteButton);
 }
 
+/**
+ * @brief handleEditButton 编辑按钮点击事件
+ */
 void EditWindow::handleEditButton() {
     QModelIndexList indexes = wordList->selectionModel()->selectedIndexes();
     if (indexes.isEmpty()) {
@@ -67,7 +75,7 @@ void EditWindow::handleEditButton() {
     query.exec();
 
     if (query.next()) {
-        // 从数据库中获取单词信息
+        // 从数据库中获取当前单词信息
         QString data = query.value(0).toString();
         // 美化json格式
         QJsonDocument doc = QJsonDocument::fromJson(data.toUtf8());
@@ -92,6 +100,9 @@ void EditWindow::handleEditButton() {
     }
 }
 
+/**
+ * @brief handleAddButton 处理新增单词按钮
+ */
 void EditWindow::handleAddButton() {
     QSqlDatabase db = QSqlDatabase::database();
 
@@ -115,6 +126,9 @@ void EditWindow::handleAddButton() {
     refreshList();
 }
 
+/**
+ * @brief handleDeleteButton 处理删除单词按钮
+ */
 void EditWindow::handleDeleteButton() {
     QModelIndexList indexes = wordList->selectionModel()->selectedIndexes();
     if (indexes.isEmpty()) {
@@ -135,6 +149,9 @@ void EditWindow::handleDeleteButton() {
     refreshList();
 }
 
+/**
+ * @brief refreshList 刷新列表
+ */
 void EditWindow::refreshList() {
     QSqlDatabase db = QSqlDatabase::database();
     // 查询数据库

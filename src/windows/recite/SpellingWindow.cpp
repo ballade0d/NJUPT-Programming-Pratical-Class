@@ -11,6 +11,12 @@
 #include <QTimer>
 #include <QSqlError>
 
+/**
+ * @brief SpellingWindow 拼写窗口
+ * @param parent 父窗口
+ * @param userId 用户ID
+ * @param bookId 单词本ID；若为-1，则表示背诵错题本
+ */
 SpellingWindow::SpellingWindow(QWidget *parent, int userId, int bookId) : QWidget(parent) {
     this->bookId = bookId;
     this->userId = userId;
@@ -62,6 +68,9 @@ SpellingWindow::SpellingWindow(QWidget *parent, int userId, int bookId) : QWidge
     }
 }
 
+/**
+ * @brief 处理下一个按钮点击事件
+ */
 void SpellingWindow::handleNextButton() {
     QPixmap pixmap;
     if (check()) {
@@ -99,12 +108,15 @@ void SpellingWindow::handleNextButton() {
 
     // 等待1500ms
     QTimer::singleShot(1500, this, [this]() {
-        iconLabel->clear();  // 清除图标
+        // 清除图标
+        iconLabel->clear();
         if (currentIndex < words.size() - 1) {
+            // 显示下一个单词
             currentIndex++;
             updateWordDisplay();
             nextButton->setEnabled(true);
         } else {
+            // 显示结果
             this->close();
             SettlementWindow *settlementWindow = new SettlementWindow(nullptr, correctAnswers, wrongAnswers);
             settlementWindow->setWindowTitle("结果");
@@ -114,6 +126,9 @@ void SpellingWindow::handleNextButton() {
     });
 }
 
+/**
+ * @brief 检查拼写是否正确
+ */
 bool SpellingWindow::check() {
     QString result;
     // 遍历所有的 QLineEdit，获取其中的文本
@@ -131,6 +146,9 @@ bool SpellingWindow::check() {
     return result == std::get<1>(words[currentIndex]);
 }
 
+/**
+ * @brief 更新单词显示
+ */
 void SpellingWindow::updateWordDisplay() {
     if (currentIndex >= 0 && currentIndex < words.size()) {
         QLayoutItem *item;

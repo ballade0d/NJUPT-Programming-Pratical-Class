@@ -8,6 +8,10 @@
 class WordEditDialog : public QDialog {
 Q_OBJECT
 
+    /**
+     * @brief WordEditDialog 编辑单词对话框
+     * @param parent 父窗口
+     */
 public:
     explicit WordEditDialog(const QString &defaultValue,
                             QWidget *parent = nullptr)

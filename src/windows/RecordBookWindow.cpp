@@ -9,6 +9,11 @@
 #include <QSqlError>
 #include <QStringListModel>
 
+/**
+ * @brief RecordBookWindow 错题本窗口
+ * @param parent 父窗口
+ * @param userId 用户 ID
+ */
 RecordBookWindow::RecordBookWindow(QWidget *parent, int userId) : QWidget(parent) {
     QSqlDatabase db = QSqlDatabase::database();
 
@@ -18,6 +23,7 @@ RecordBookWindow::RecordBookWindow(QWidget *parent, int userId) : QWidget(parent
     query.exec();
 
     QStringList list;
+    // 记录每个错题的书名和单词ID
     while (query.next()) {
         QVariant bookId = query.value(0).toInt();
         QVariant wordId = query.value(1).toInt();
@@ -53,6 +59,7 @@ RecordBookWindow::RecordBookWindow(QWidget *parent, int userId) : QWidget(parent
     hLayout->addWidget(listView);
     hLayout->addLayout(vLayout);
 
+    // 选择列表中的某个单词时，更新显示的单词内容
     connect(listView->selectionModel(), &QItemSelectionModel::selectionChanged,
             [this](const QItemSelection &selected, const QItemSelection &deselected) {
                 Q_UNUSED(deselected);
@@ -69,6 +76,9 @@ RecordBookWindow::RecordBookWindow(QWidget *parent, int userId) : QWidget(parent
     }
 }
 
+/**
+ * @brief updateWordDisplay 更新显示的单词信息
+ */
 void RecordBookWindow::updateWordDisplay() {
     if (currentIndex >= 0 && currentIndex < record.size()) {
         QSqlDatabase db = QSqlDatabase::database();

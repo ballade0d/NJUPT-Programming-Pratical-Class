@@ -12,9 +12,17 @@
 #include <QMessageBox>
 #include <QStackedLayout>
 
+/**
+ * @brief HomeWidget 主页窗口
+ * @param parent 父窗口
+ */
 HomeWidget::HomeWidget(QWidget *parent) : QWidget(parent) {
 }
 
+/**
+ * @brief setup 初始化主页窗口
+ * @param userId 用户Id
+ */
 void HomeWidget::setup(int userId) {
     this->userId = userId;
     QVBoxLayout *mainLayout = new QVBoxLayout(this);
@@ -37,6 +45,7 @@ void HomeWidget::setup(int userId) {
     listButtonLayout->addWidget(addButton);
     listButtonLayout->addWidget(deleteButton);
 
+    // 设置按钮样式
     QString listButtonStyle = R"(
 QPushButton {
     background-color: #f0f0f0;
@@ -114,6 +123,10 @@ QPushButton:pressed {
     mainLayout->addWidget(editButton);
 }
 
+/**
+ * @brief getSelectedBookId 获取选中的单词本Id
+ * @return 单词本Id
+ */
 int HomeWidget::getSelectedBookId() {
     QModelIndexList indexes = listView->selectionModel()->selectedIndexes();
     if (indexes.isEmpty()) {
@@ -137,6 +150,9 @@ int HomeWidget::getSelectedBookId() {
     return -1;
 }
 
+/**
+ * @brief handleCalendarButton 处理打卡日历按钮
+ */
 void HomeWidget::handleCalendarButton() {
     CalendarWindow *calendarWindow = new CalendarWindow(this, userId);
     // 设置窗口标题
@@ -145,6 +161,9 @@ void HomeWidget::handleCalendarButton() {
     calendarWindow->exec();
 }
 
+/**
+ * @brief handleEditButton 处理编辑按钮
+ */
 void HomeWidget::handleEditButton() {
     int bookId = getSelectedBookId();
     if (bookId == -1) {
@@ -155,6 +174,9 @@ void HomeWidget::handleEditButton() {
     editWindow->exec();
 }
 
+/**
+ * @brief handleLearnButton 处理学习按钮
+ */
 void HomeWidget::handleLearnButton() {
     int bookId = getSelectedBookId();
     if (bookId == -1) {
@@ -165,6 +187,9 @@ void HomeWidget::handleLearnButton() {
     learnWindow->show();
 }
 
+/**
+ * @brief handleReciteButton 处理背诵按钮
+ */
 void HomeWidget::handleReciteButton() {
     int bookId = getSelectedBookId();
     if (bookId == -1) {
@@ -188,6 +213,9 @@ void HomeWidget::handleReciteButton() {
     }
 }
 
+/**
+ * @brief handleAddButton 处理新增按钮
+ */
 void HomeWidget::handleAddButton() {
     BookAddDialog dialog(this);
     if (dialog.exec() == QDialog::Accepted) {
@@ -204,6 +232,9 @@ void HomeWidget::handleAddButton() {
     }
 }
 
+/**
+ * @brief handleDeleteButton 处理删除按钮
+ */
 void HomeWidget::handleDeleteButton() {
     BookDeleteDialog dialog(this);
     if (dialog.exec() == QDialog::Accepted) {
@@ -223,6 +254,9 @@ void HomeWidget::handleDeleteButton() {
     }
 }
 
+/**
+ * @brief handleRecordButton 处理错题本按钮
+ */
 void HomeWidget::handleRecordButton() {
     QSqlDatabase db = QSqlDatabase::database();
     QSqlQuery query(db);
@@ -240,6 +274,9 @@ void HomeWidget::handleRecordButton() {
     recordBookWindow->show();
 }
 
+/**
+ * @brief handleReviewButton 处理复习按钮
+ */
 void HomeWidget::handleReviewButton() {
     QSqlDatabase db = QSqlDatabase::database();
     QSqlQuery query(db);
@@ -269,6 +306,9 @@ void HomeWidget::handleReviewButton() {
     }
 }
 
+/**
+ * @brief refreshList 刷新单词本列表
+ */
 void HomeWidget::refreshList() {
     QSqlDatabase db = QSqlDatabase::database();
     // 查询数据库

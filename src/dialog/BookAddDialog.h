@@ -9,6 +9,10 @@
 class BookAddDialog : public QDialog {
 Q_OBJECT
 
+    /**
+     * @brief BookAddDialog 新增单词本对话框
+     * @param parent 父窗口
+     */
 public:
     explicit BookAddDialog(QWidget *parent = nullptr)
             : QDialog(parent) {
