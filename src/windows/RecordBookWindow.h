@@ -4,6 +4,7 @@
 #include <QWidget>
 #include <QLabel>
 #include <QListView>
+#include "../entity/Word.h"
 
 class RecordBookWindow : public QWidget {
 Q_OBJECT
@@ -18,7 +19,7 @@ private slots:
 private:
     int userId;
     QListView *listView;
-    QList<QPair<QString, QVariant>> record;
+    QList<Word*> record;
     int currentIndex = -1;
     QLabel *wordLabel;
 };

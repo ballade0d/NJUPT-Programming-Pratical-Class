@@ -3,6 +3,7 @@
 
 #include <QWidget>
 #include <QLabel>
+#include "../entity/Word.h"
 
 class LearnWindow : public QWidget {
 Q_OBJECT
@@ -20,7 +21,7 @@ private slots:
 
 
 private:
-    QList<QPair<QString, QString>> words;
+    QList<Word*> words;
     QLabel *wordLabel;
     int currentIndex = 0;
 };

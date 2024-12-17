@@ -13,8 +13,6 @@ find_package(Qt6 REQUIRED COMPONENTS Widgets Sql Charts)
 
 set(PROJECT_SOURCES
         src/main.cpp
-        src/windows/RecordBookWindow.h
-        src/windows/RecordBookWindow.cpp
 )
 
 qt_add_executable(${PROJECT_NAME}
@@ -40,7 +38,14 @@ qt_add_executable(${PROJECT_NAME}
         src/windows/RecordBookWindow.h src/windows/RecordBookWindow.cpp
 
         resource/resource.qrc
-
+        src/entity/Book.h
+        src/mapper/BookMapper.h
+        src/entity/Word.h
+        src/mapper/WordMapper.h
+        src/mapper/RecordMapper.h
+        src/mapper/CheckInMapper.h
+        src/mapper/UserMapper.h
+        src/entity/User.h
 )
 
 # Link Qt and SQL

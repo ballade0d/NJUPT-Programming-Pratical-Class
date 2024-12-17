@@ -21,23 +21,23 @@ HomeWidget::HomeWidget(QWidget *parent) : QWidget(parent) {
 
 void HomeWidget::setup(int userId) {
     this->userId = userId;
-    QVBoxLayout *mainLayout = new QVBoxLayout(this);
+    QVBoxLayout * mainLayout = new QVBoxLayout(this);
 
     // 创建打卡日历按钮
-    QPushButton *checkInButton = new QPushButton("打卡日历");
+    QPushButton * checkInButton = new QPushButton("打卡日历");
     connect(checkInButton, &QPushButton::clicked, this, &HomeWidget::handleCalendarButton);
     mainLayout->addWidget(checkInButton);
 
     listView = new QListView();
     refreshList();
-    QHBoxLayout *listLayout = new QHBoxLayout();
+    QHBoxLayout * listLayout = new QHBoxLayout();
     listLayout->addWidget(listView);
 
-    QPushButton *addButton = new QPushButton("+");
-    QPushButton *deleteButton = new QPushButton("-");
+    QPushButton * addButton = new QPushButton("+");
+    QPushButton * deleteButton = new QPushButton("-");
     addButton->setFixedSize(30, 30); // 设置按钮大小
     deleteButton->setFixedSize(30, 30); // 设置按钮大小
-    QGridLayout *listButtonLayout = new QGridLayout();
+    QGridLayout * listButtonLayout = new QGridLayout();
     listButtonLayout->addWidget(addButton, 0, 0);
     listButtonLayout->addWidget(deleteButton, 1, 0);
 
@@ -49,11 +49,11 @@ void HomeWidget::setup(int userId) {
     mainLayout->addLayout(listLayout);
 
     // 创建网格布局用于包含多个按钮
-    QGridLayout *buttonLayout = new QGridLayout();
+    QGridLayout * buttonLayout = new QGridLayout();
     mainLayout->addLayout(buttonLayout);
 
     // 学习按钮
-    QPushButton *learnButton = new QPushButton("开始学习");
+    QPushButton * learnButton = new QPushButton("开始学习");
     // 设置按钮默认状态为关闭，在选择物品时开启
     learnButton->setEnabled(false);  // 默认禁用
     connect(listView->selectionModel(), &QItemSelectionModel::selectionChanged,
@@ -65,7 +65,7 @@ void HomeWidget::setup(int userId) {
     buttonLayout->addWidget(learnButton, 0, 0);
 
     // 背诵按钮
-    QPushButton *reciteButton = new QPushButton("开始背诵");
+    QPushButton * reciteButton = new QPushButton("开始背诵");
     // 设置按钮默认状态为关闭，在选择物品时开启
     reciteButton->setEnabled(false);  // 默认禁用
     connect(listView->selectionModel(), &QItemSelectionModel::selectionChanged,
@@ -77,17 +77,17 @@ void HomeWidget::setup(int userId) {
     buttonLayout->addWidget(reciteButton, 0, 1);
 
     // 错题按钮
-    QPushButton *recordButton = new QPushButton("错题本");
+    QPushButton * recordButton = new QPushButton("错题本");
     connect(recordButton, &QPushButton::clicked, this, &HomeWidget::handleRecordButton);
     buttonLayout->addWidget(recordButton, 1, 0);
 
     // 复习按钮
-    QPushButton *reviewButton = new QPushButton("复习错题");
+    QPushButton * reviewButton = new QPushButton("复习错题");
     connect(reviewButton, &QPushButton::clicked, this, &HomeWidget::handleReviewButton);
     buttonLayout->addWidget(reviewButton, 1, 1);
 
     // 编辑按钮
-    QPushButton *editButton = new QPushButton("编辑");
+    QPushButton * editButton = new QPushButton("编辑");
     // 设置按钮默认状态为关闭，在选择物品时开启
     editButton->setEnabled(false);  // 默认禁用
     connect(listView->selectionModel(), &QItemSelectionModel::selectionChanged,
@@ -128,27 +128,17 @@ QPushButton:pressed {
  * @brief getSelectedBookId 获取选中的单词本Id
  * @return 单词本Id
  */
-int HomeWidget::getSelectedBookId() {
+Book *HomeWidget::getSelectedBook() {
     QModelIndexList indexes = listView->selectionModel()->selectedIndexes();
     if (indexes.isEmpty()) {
-        return -1;
+        return nullptr;
     }
     // 获取列表中选中的物品
     QModelIndex index = indexes.first();
-    QString book = index.data(Qt::DisplayRole).toString();
+    QString name = index.data(Qt::DisplayRole).toString();
 
-    QSqlDatabase db = QSqlDatabase::database();
-    QSqlQuery query(db);
-    query.prepare("SELECT id from book WHERE user_id = :user_id AND name = :name");
-    query.bindValue(":user_id", userId);
-    query.bindValue(":name", book);
-    query.exec();
-
-    if (query.next()) {
-        // 从数据库中获取单词本Id
-        return query.value(0).toInt();
-    }
-    return -1;
+    Book *book = BookMapper::getBookByName(userId, name);
+    return book;
 }
 
 /**
@@ -166,11 +156,11 @@ void HomeWidget::handleCalendarButton() {
  * @brief handleEditButton 处理编辑按钮
  */
 void HomeWidget::handleEditButton() {
-    int bookId = getSelectedBookId();
-    if (bookId == -1) {
+    Book *book = getSelectedBook();
+    if (book == nullptr) {
         return;
     }
-    EditWindow *editWindow = new EditWindow(this, bookId);
+    EditWindow *editWindow = new EditWindow(this, book->getId());
     editWindow->setWindowTitle("编辑单词本");
     editWindow->exec();
 }
@@ -179,11 +169,11 @@ void HomeWidget::handleEditButton() {
  * @brief handleLearnButton 处理学习按钮
  */
 void HomeWidget::handleLearnButton() {
-    int bookId = getSelectedBookId();
-    if (bookId == -1) {
+    Book *book = getSelectedBook();
+    if (book == nullptr) {
         return;
     }
-    LearnWindow *learnWindow = new LearnWindow(nullptr, bookId);
+    LearnWindow *learnWindow = new LearnWindow(nullptr, book->getId());
     learnWindow->setWindowTitle("单词背诵");
     learnWindow->show();
 }
@@ -192,23 +182,23 @@ void HomeWidget::handleLearnButton() {
  * @brief handleReciteButton 处理背诵按钮
  */
 void HomeWidget::handleReciteButton() {
-    int bookId = getSelectedBookId();
-    if (bookId == -1) {
+    Book *book = getSelectedBook();
+    if (book == nullptr) {
         return;
     }
     QMessageBox msgBox;
     msgBox.setWindowTitle("请选择背诵方式");
     msgBox.setText("请选择背诵方式");
-    QPushButton *button1 = msgBox.addButton("选择题背诵", QMessageBox::ActionRole);
-    QPushButton *button2 = msgBox.addButton("拼写单词背诵", QMessageBox::ActionRole);
+    QPushButton * button1 = msgBox.addButton("选择题背诵", QMessageBox::ActionRole);
+    QPushButton * button2 = msgBox.addButton("拼写单词背诵", QMessageBox::ActionRole);
     msgBox.exec();
 
     if (msgBox.clickedButton() == button1) {
-        MultipleChoiceWindow *window = new MultipleChoiceWindow(nullptr, userId, bookId);
+        MultipleChoiceWindow *window = new MultipleChoiceWindow(nullptr, userId, book->getId());
         window->setWindowTitle("单词背诵");
         window->show();
     } else if (msgBox.clickedButton() == button2) {
-        SpellingWindow *window = new SpellingWindow(nullptr, userId, bookId);
+        SpellingWindow *window = new SpellingWindow(nullptr, userId, book->getId());
         window->setWindowTitle("单词背诵");
         window->show();
     }
@@ -221,13 +211,7 @@ void HomeWidget::handleAddButton() {
     BookAddDialog dialog(this);
     if (dialog.exec() == QDialog::Accepted) {
         QString newBook = dialog.getBook();
-
-        QSqlDatabase db = QSqlDatabase::database();
-        QSqlQuery query(db);
-        query.prepare("INSERT INTO book(user_id, name) VALUES (:user_id, :name)");
-        query.bindValue(":user_id", userId);
-        query.bindValue(":name", newBook);
-        query.exec();
+        BookMapper::createBook(userId, newBook);
 
         refreshList();
     }
@@ -239,16 +223,12 @@ void HomeWidget::handleAddButton() {
 void HomeWidget::handleDeleteButton() {
     BookDeleteDialog dialog(this);
     if (dialog.exec() == QDialog::Accepted) {
-        int bookId = getSelectedBookId();
-        if (bookId == -1) {
+        Book *book = getSelectedBook();
+        if (book == nullptr) {
             return;
         }
 
-        QSqlDatabase db = QSqlDatabase::database();
-        QSqlQuery query(db);
-        query.prepare("DELETE FROM book WHERE id = :id");
-        query.bindValue(":id", bookId);
-        query.exec();
+        BookMapper::deleteBook(book->getId());
 
         listView->selectionModel()->clearSelection();
         refreshList();
@@ -292,8 +272,8 @@ void HomeWidget::handleReviewButton() {
     QMessageBox msgBox;
     msgBox.setWindowTitle("请选择背诵方式");
     msgBox.setText("请选择背诵方式");
-    QPushButton *button1 = msgBox.addButton("选择题背诵", QMessageBox::ActionRole);
-    QPushButton *button2 = msgBox.addButton("拼写单词背诵", QMessageBox::ActionRole);
+    QPushButton * button1 = msgBox.addButton("选择题背诵", QMessageBox::ActionRole);
+    QPushButton * button2 = msgBox.addButton("拼写单词背诵", QMessageBox::ActionRole);
     msgBox.exec();
 
     if (msgBox.clickedButton() == button1) {
@@ -311,17 +291,16 @@ void HomeWidget::handleReviewButton() {
  * @brief refreshList 刷新单词本列表
  */
 void HomeWidget::refreshList() {
-    QSqlDatabase db = QSqlDatabase::database();
-    // 查询数据库
-    QSqlQuery query(db);
-    query.prepare("SELECT (name) FROM book WHERE user_id = :user_id");
-    query.bindValue(":user_id", userId);
-    query.exec();
+    QList<Book *> books = BookMapper::getAllBooks(userId);
+    QStringList bookNames;
+    for (Book *book: books) {
+        bookNames.append(book->getName());
+    }
 
     if (listView->model() == nullptr) {
-        QSqlQueryModel *model = new QSqlQueryModel(this);
+        QStringListModel *model = new QStringListModel(bookNames);
         listView->setModel(model);
     }
 
-    dynamic_cast<QSqlQueryModel *>(listView->model())->setQuery(query);
+    dynamic_cast<QStringListModel *>(listView->model())->setStringList(bookNames);
 }

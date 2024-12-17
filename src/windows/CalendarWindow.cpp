@@ -1,7 +1,6 @@
 #include "CalendarWindow.h"
+#include "../mapper/CheckInMapper.h"
 #include <QTextCharFormat>
-#include <QSqlDatabase>
-#include <QSqlQuery>
 #include <QPushButton>
 #include <QMessageBox>
 
@@ -20,7 +19,7 @@ CalendarWindow::CalendarWindow(QWidget *parent, int userId) : QDialog(parent) {
 
     loadCheckIns();
 
-    QVBoxLayout *layout = new QVBoxLayout(this);
+    QVBoxLayout * layout = new QVBoxLayout(this);
     layout->addWidget(calendar);
 
     QPushButton *checkInButton = new QPushButton("今日打卡", this);
@@ -43,16 +42,9 @@ QCalendarWidget QAbstractItemView {
  * @brief loadCheckIns 加载用户的打卡记录
  */
 void CalendarWindow::loadCheckIns() {
-    QSqlDatabase db = QSqlDatabase::database();
-    QSqlQuery query(db);
-
-    query.exec("SELECT date FROM check_in WHERE user_id = " + QString::number(userId));
-
     QTextCharFormat format;
     format.setBackground(Qt::green);  // 已打卡日期的显示格式
-
-    while (query.next()) {
-        QDate date = QDate::fromString(query.value(0).toString(), "yyyy-MM-dd");
+    for (QDate date: CheckInMapper::getAllCheckIns(userId)) {
         calendar->setDateTextFormat(date, format);
     }
 }
@@ -61,14 +53,8 @@ void CalendarWindow::loadCheckIns() {
  * @brief checkIn 打卡
  */
 void CalendarWindow::checkIn() {
-    QSqlDatabase db = QSqlDatabase::database();
-    QSqlQuery query(db);
     QDateTime currentTime = QDateTime::currentDateTime();
-
-    query.prepare("INSERT INTO check_in (user_id, date) VALUES (:user_id, :date)");
-    query.bindValue(":user_id", userId);
-    query.bindValue(":date", currentTime.toString("yyyy-MM-dd"));
-    query.exec();
+    CheckInMapper::checkIn(userId, currentTime.toString("yyyy-MM-dd"));
 }
 
 /**
@@ -76,19 +62,8 @@ void CalendarWindow::checkIn() {
  * @return
  */
 bool CalendarWindow::isTodayCheckedIn() {
-    QSqlDatabase db = QSqlDatabase::database();
-    QSqlQuery query(db);
     QDate today = QDate::currentDate();
-
-    query.prepare("SELECT COUNT(*) FROM check_in WHERE date(date) = :today AND user_id = :user_id");
-    query.bindValue(":user_id", userId);
-    query.bindValue(":today", today.toString("yyyy-MM-dd"));
-    query.exec();
-
-    if (query.next() && query.value(0).toInt() > 0) {
-        return true;
-    }
-    return false;
+    return CheckInMapper::exists(userId, today.toString("yyyy-MM-dd"));
 }
 
 /**

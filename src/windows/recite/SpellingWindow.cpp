@@ -1,9 +1,10 @@
 #include "SpellingWindow.h"
 #include "SettlementWindow.h"
+#include "../../mapper/WordMapper.h"
+#include "../../mapper/RecordMapper.h"
 #include <QDialog>
 #include <QVBoxLayout>
 #include <QSqlDatabase>
-#include <QSqlQuery>
 #include <QPushButton>
 #include <QJsonDocument>
 #include <QJsonObject>
@@ -20,26 +21,13 @@
 SpellingWindow::SpellingWindow(QWidget *parent, int userId, int bookId) : QWidget(parent) {
     this->bookId = bookId;
     this->userId = userId;
-    QSqlDatabase db = QSqlDatabase::database();
 
-    QSqlQuery query(db);
     if (bookId != -1) {
         // 背诵单词本
-        query.prepare("SELECT id, word, data from book_word WHERE book_id = :book_id");
-        query.bindValue(":book_id", bookId);
+        words = WordMapper::getWords(bookId);
     } else {
         // 背诵错题本
-        query.prepare(
-                "SELECT bw.id, bw.word, bw.data from record r JOIN book_word bw ON r.word_id = bw.id WHERE r.user_id = :user_id");
-        query.bindValue(":user_id", userId);
-    }
-    query.exec();
-
-    while (query.next()) {
-        int id = query.value(0).toInt();
-        QString word = query.value(1).toString();
-        QString data = query.value(2).toString();
-        words.append(std::make_tuple(id, word, data));
+        words = RecordMapper::getWords(userId);
     }
 
     // 创建一个垂直布局
@@ -75,7 +63,7 @@ void SpellingWindow::handleNextButton() {
     QPixmap pixmap;
     if (check()) {
         pixmap = QPixmap(":/correct.svg");
-        correctAnswers.append(std::get<1>(words[currentIndex]));
+        correctAnswers.append(words[currentIndex]->getWord());
 
         if (bookId == -1) {
             // 从错题本中删除
@@ -83,29 +71,18 @@ void SpellingWindow::handleNextButton() {
             QSqlQuery query(db);
             query.prepare("DELETE FROM record WHERE user_id = :user_id AND word_id = :word_id");
             query.bindValue(":user_id", userId);
-            query.bindValue(":word_id", std::get<0>(words[currentIndex]));
+            query.bindValue(":word_id", words[currentIndex]->getId());
             query.exec();
         }
     } else {
         pixmap = QPixmap(":/incorrect.svg");
-        wrongAnswers.append(std::get<1>(words[currentIndex]));
+        wrongAnswers.append(words[currentIndex]->getWord());
 
         if (bookId != -1) {
-            QSqlDatabase db = QSqlDatabase::database();
-
-            QSqlQuery query(db);
             // 已在错题本的不再添加
-            query.prepare("SELECT * FROM record WHERE user_id = :user_id AND word_id = :word_id");
-            query.bindValue(":user_id", userId);
-            query.bindValue(":word_id", std::get<0>(words[currentIndex]));
-            query.exec();
-            if (!query.next()) {
+            if (!RecordMapper::exists(userId, words[currentIndex])) {
                 // 添加到错题本
-                query.prepare("INSERT INTO record(user_id, book_id, word_id) VALUES (:user_id, :book_id, :word_id)");
-                query.bindValue(":user_id", userId);
-                query.bindValue(":book_id", bookId);
-                query.bindValue(":word_id", std::get<0>(words[currentIndex]));
-                query.exec();
+                RecordMapper::addWord(userId, words[currentIndex]);
             }
         }
     }
@@ -150,7 +127,7 @@ bool SpellingWindow::check() {
         }
     }
 
-    return result == std::get<1>(words[currentIndex]);
+    return result == words[currentIndex]->getWord();
 }
 
 /**
@@ -165,8 +142,8 @@ void SpellingWindow::updateWordDisplay() {
             delete item;
         }
 
-        QString word = std::get<1>(words[currentIndex]);
-        QString jsonData = std::get<2>(words[currentIndex]);
+        QString word = words[currentIndex]->getWord();
+        QString jsonData = words[currentIndex]->getData();
         QJsonDocument doc = QJsonDocument::fromJson(jsonData.toUtf8());
         QJsonObject obj = doc.object();
         wordLabel->setText(obj.find("释义")->toString());

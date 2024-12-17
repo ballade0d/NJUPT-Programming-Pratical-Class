@@ -1,6 +1,7 @@
 #ifndef EDITWINDOW_H
 #define EDITWINDOW_H
 
+#include "../entity/Word.h"
 #include <QDialog>
 #include <QCalendarWidget>
 #include <QVBoxLayout>
@@ -13,6 +14,8 @@ public:
     explicit EditWindow(QWidget *parent, int bookId);
 
 private slots:
+
+    Word* getSelectedWord();
 
     void handleAddButton();
 

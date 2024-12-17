@@ -1,5 +1,6 @@
 #include "LoginWidget.h"
-#include <QtSql>
+#include "../entity/User.h"
+#include "../mapper/UserMapper.h"
 #include <QCryptographicHash>
 #include <QMessageBox>
 
@@ -22,14 +23,14 @@ LoginWidget::LoginWidget(QWidget *parent) : QWidget(parent) {
     passwordLineEdit->setPlaceholderText("密码");
 
     // 创建登陆按钮
-    QPushButton *loginButton = new QPushButton(this);
+    QPushButton * loginButton = new QPushButton(this);
     // 位于密码输入框下方
     loginButton->setGeometry((480 - 100) / 2, 200 + 40 + 40, 100, 32);
     loginButton->setText("登陆");
     loginButton->setObjectName("loginButton");
 
     // 创建注册按钮
-    QPushButton *registerButton = new QPushButton(this);
+    QPushButton * registerButton = new QPushButton(this);
     // 位于登录按钮下方
     registerButton->setGeometry((480 - 150) / 2, 200 + 40 + 40 + 40, 150, 32);
     registerButton->setText("新用户注册");
@@ -115,23 +116,12 @@ QString encryptPassword(const QString &password) {
 }
 
 int checkPassword(const QString &username, const QString &password) {
-    QSqlDatabase db = QSqlDatabase::database();  // 获取数据库连接
-    QSqlQuery query(db);
-
-    // 使用预处理语句防止SQL注入
-    query.prepare("SELECT id, password FROM user_password WHERE username = :username");
-    query.bindValue(":username", username);
-    query.exec();
-
-    if (query.next()) {
-        QVariant id = query.value(0);
-        // 从数据库中获取加密的密码
-        QString storedPassword = query.value(1).toString();
-
-        // 与数据库中的加密密码进行比较
-        if (encryptPassword(password) == storedPassword) {
-            return id.toInt();
-        }
+    User *user = UserMapper::getUserByName(username);
+    if (user == nullptr) {
+        return -1;
+    }
+    if (encryptPassword(password) == user->getPassword()) {
+        return user->getId();
     }
     return -1;
 }
@@ -151,20 +141,6 @@ void LoginWidget::handleLoginButton() {
     }
 }
 
-bool checkIfUserExists(const QString &username, QSqlDatabase &db) {
-    QSqlQuery query(db);
-    query.prepare("SELECT COUNT(*) FROM user_password WHERE username = :username");
-    query.bindValue(":username", username);
-    query.exec();
-
-    if (query.next()) {
-        int count = query.value(0).toInt();
-        return count > 0;
-    }
-
-    return false;
-}
-
 void LoginWidget::handleRegisterButton() {
     // 从输入框中获取账号密码
     const QString username = usernameLineEdit->text();
@@ -175,17 +151,10 @@ void LoginWidget::handleRegisterButton() {
         return;
     }
 
-    QSqlDatabase db = QSqlDatabase::database();
-    if (checkIfUserExists(username, db)) {
+    if (UserMapper::exists(username)) {
         QMessageBox::critical(nullptr, "错误", "用户名已存在，请登陆！");
     } else {
-        QSqlQuery query(db);
-        query.prepare("INSERT INTO user_password(username, password) VALUES (:username, :password)");
-        query.bindValue(":username", username);
-        query.bindValue(":password", encryptPassword(password));
-
-        if (query.exec()) {
-            QMessageBox::information(nullptr, "信息", "注册成功！请登录");
-        }
+        UserMapper::createUser(username, encryptPassword(password));
+        QMessageBox::information(nullptr, "信息", "注册成功！请登录");
     }
 }

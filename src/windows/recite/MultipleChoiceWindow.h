@@ -8,6 +8,7 @@
 #include <QLineEdit>
 #include <QKeyEvent>
 #include <QPushButton>
+#include "../../entity/Word.h"
 
 class MultipleChoiceWindow : public QWidget {
 Q_OBJECT
@@ -24,7 +25,7 @@ private slots:
 private:
     int bookId;
     int userId;
-    QList<std::tuple<int, QString, QString>> words;
+    QList<Word*> words;
     QLabel *wordLabel;
     int currentIndex = 0;
     QButtonGroup *buttonGroup;

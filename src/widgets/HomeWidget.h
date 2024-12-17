@@ -8,6 +8,8 @@
 #include <QFormLayout>
 #include <QVBoxLayout>
 #include <QListView>
+#include "../mapper/BookMapper.h"
+#include "../mapper/WordMapper.h"
 
 class HomeWidget : public QWidget {
 Q_OBJECT
@@ -23,7 +25,7 @@ signals:
 
 private slots:
 
-    int getSelectedBookId();
+    Book *getSelectedBook();
 
     void handleCalendarButton(); // 处理打卡按钮
     void handleEditButton(); // 处理编辑按钮
@@ -42,6 +44,9 @@ private slots:
     void refreshList();
 
 private:
+    BookMapper *bookMapper;
+    WordMapper *wordMapper;
+
     int userId;
     QListView *listView;
 };

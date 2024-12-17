@@ -1,13 +1,11 @@
 #include "EditWindow.h"
 #include "../dialog/WordAddDialog.h"
 #include "../dialog/WordEditDialog.h"
+#include "../mapper/WordMapper.h"
 #include <QSqlDatabase>
-#include <QSqlQuery>
 #include <QPushButton>
 #include <QMessageBox>
-#include <QSqlQueryModel>
 #include <QJsonDocument>
-#include <QJsonObject>
 #include <QtSql>
 
 /**
@@ -20,7 +18,7 @@ EditWindow::EditWindow(QWidget *parent, int bookId) : QDialog(parent) {
 
     QSqlDatabase db = QSqlDatabase::database();
 
-    QVBoxLayout *layout = new QVBoxLayout(this);
+    QVBoxLayout * layout = new QVBoxLayout(this);
 
     // 创建按钮
     QPushButton *editButton = new QPushButton("编辑单词", this);
@@ -56,47 +54,44 @@ EditWindow::EditWindow(QWidget *parent, int bookId) : QDialog(parent) {
     connect(deleteButton, &QPushButton::clicked, this, &EditWindow::handleDeleteButton);
 }
 
+Word *EditWindow::getSelectedWord() {
+    QModelIndexList indexes = wordList->selectionModel()->selectedIndexes();
+    if (indexes.isEmpty()) {
+        return nullptr;
+    }
+    // 获取列表中选中的物品
+    QModelIndex index = indexes.first();
+    QString spelling = index.data(Qt::DisplayRole).toString();
+
+    return WordMapper::getWord(spelling, bookId);
+}
+
 /**
  * @brief handleEditButton 编辑按钮点击事件
  */
 void EditWindow::handleEditButton() {
-    QModelIndexList indexes = wordList->selectionModel()->selectedIndexes();
-    if (indexes.isEmpty()) {
+    Word *word = getSelectedWord();
+    if (word == nullptr) {
         return;
     }
-    // 获取列表中选中的物品
-    QModelIndex index = indexes.first();
-    QString word = index.data(Qt::DisplayRole).toString();
 
-    QSqlDatabase db = QSqlDatabase::database();
-    QSqlQuery query(db);
-    query.prepare("SELECT data from book_word WHERE word = :word");
-    query.bindValue(":word", word);
-    query.exec();
+    // 从数据库中获取当前单词信息
+    QString data = word->getData();
+    // 美化json格式
+    QJsonDocument doc = QJsonDocument::fromJson(data.toUtf8());
+    QString formattedJson = doc.toJson(QJsonDocument::Indented);
 
-    if (query.next()) {
-        // 从数据库中获取当前单词信息
-        QString data = query.value(0).toString();
-        // 美化json格式
-        QJsonDocument doc = QJsonDocument::fromJson(data.toUtf8());
-        QString formattedJson = doc.toJson(QJsonDocument::Indented);
-
-        WordEditDialog dialog(formattedJson, this);
-        QString newText;
-        if (dialog.exec() == QDialog::Accepted) {
-            newText = dialog.getText();
-            // 解析用户编辑后的 JSON
-            QJsonDocument newDoc = QJsonDocument::fromJson(newText.toUtf8());
-            // 将 JSON 转换为紧凑格式
-            QString unbeautifiedJson = newDoc.toJson(QJsonDocument::Compact);
-            // 更新数据到数据库
-            QSqlQuery updateQuery(db);
-            updateQuery.prepare("UPDATE book_word SET data = :data WHERE word = :word AND book_id = :book_id");
-            updateQuery.bindValue(":book_id", bookId);
-            updateQuery.bindValue(":data", unbeautifiedJson);
-            updateQuery.bindValue(":word", word);
-            updateQuery.exec();
-        }
+    WordEditDialog dialog(formattedJson, this);
+    QString newText;
+    if (dialog.exec() == QDialog::Accepted) {
+        newText = dialog.getText();
+        // 解析用户编辑后的 JSON
+        QJsonDocument newDoc = QJsonDocument::fromJson(newText.toUtf8());
+        // 将 JSON 转换为紧凑格式
+        QString unbeautifiedJson = newDoc.toJson(QJsonDocument::Compact);
+        // 更新数据到数据库
+        word->setData(unbeautifiedJson);
+        WordMapper::updateWord(word);
     }
 }
 
@@ -115,12 +110,7 @@ void EditWindow::handleAddButton() {
         // 将 JSON 转换为紧凑格式
         QString unbeautifiedJson = doc.toJson(QJsonDocument::Compact);
         // 更新数据到数据库
-        QSqlQuery query(db);
-        query.prepare("INSERT INTO book_word(book_id, word, data) VALUES (:book_id, :word, :data)");
-        query.bindValue(":book_id", bookId);
-        query.bindValue(":word", newWord);
-        query.bindValue(":data", unbeautifiedJson);
-        query.exec();
+        WordMapper::createWord(bookId, newWord, unbeautifiedJson);
     }
 
     refreshList();
@@ -130,21 +120,11 @@ void EditWindow::handleAddButton() {
  * @brief handleDeleteButton 处理删除单词按钮
  */
 void EditWindow::handleDeleteButton() {
-    QModelIndexList indexes = wordList->selectionModel()->selectedIndexes();
-    if (indexes.isEmpty()) {
+    Word *word = getSelectedWord();
+    if (word == nullptr) {
         return;
     }
-    // 获取列表中选中的物品
-    QModelIndex index = indexes.first();
-    QString word = index.data(Qt::DisplayRole).toString();
-
-    QSqlDatabase db = QSqlDatabase::database();
-    QSqlQuery query(db);
-    query.prepare("DELETE FROM book_word WHERE word = :word AND book_id = :book_id");
-    query.bindValue(":book_id", bookId);
-    query.bindValue(":word", word);
-    query.exec();
-
+    WordMapper::deleteWord(word->getId());
     wordList->selectionModel()->clearSelection();
     refreshList();
 }
@@ -153,17 +133,15 @@ void EditWindow::handleDeleteButton() {
  * @brief refreshList 刷新列表
  */
 void EditWindow::refreshList() {
-    QSqlDatabase db = QSqlDatabase::database();
-    // 查询数据库
-    QSqlQuery query(db);
-    query.prepare("SELECT word FROM book_word WHERE book_id = :book_id");
-    query.bindValue(":book_id", bookId);
-    query.exec();
-
+    QList<Word *> words = WordMapper::getWords(bookId);
+    QList<QString> spellings;
+    for (Word *word: words) {
+        spellings.append(word->getWord());
+    }
     if (wordList->model() == nullptr) {
-        QSqlQueryModel *model = new QSqlQueryModel(this);
+        QStringListModel *model = new QStringListModel(this);
         wordList->setModel(model);
     }
 
-    dynamic_cast<QSqlQueryModel *>(wordList->model())->setQuery(query);
+    dynamic_cast<QStringListModel *>(wordList->model())->setStringList(spellings);
 }

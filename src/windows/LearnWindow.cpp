@@ -1,8 +1,8 @@
 #include "LearnWindow.h"
+#include "../mapper/WordMapper.h"
 #include <QDialog>
 #include <QVBoxLayout>
 #include <QSqlDatabase>
-#include <QSqlQuery>
 #include <QPushButton>
 #include <QJsonDocument>
 #include <QJsonObject>
@@ -13,22 +13,10 @@
  * @param bookId 书籍 ID
  */
 LearnWindow::LearnWindow(QWidget *parent, int bookId) : QWidget(parent) {
-    QSqlDatabase db = QSqlDatabase::database();
-
-    QSqlQuery query(db);
-    query.prepare("SELECT word, data from book_word WHERE book_id = :book_id");
-    query.bindValue(":book_id", bookId);
-    query.exec();
-
-    while (query.next()) {
-        QString word = query.value(0).toString();
-        QString data = query.value(1).toString();
-
-        words.append(qMakePair(word, data));
-    }
+    this->words = WordMapper::getWords(bookId);
 
     // 创建一个垂直布局
-    QVBoxLayout *vLayout = new QVBoxLayout(this);
+    QVBoxLayout * vLayout = new QVBoxLayout(this);
 
     // 创建显示单词的标签
     wordLabel = new QLabel(this);
@@ -37,7 +25,7 @@ LearnWindow::LearnWindow(QWidget *parent, int bookId) : QWidget(parent) {
 
     QPushButton *previousButton = new QPushButton("上一个", this);
     QPushButton *nextButton = new QPushButton("下一个", this);
-    QHBoxLayout *hLayout = new QHBoxLayout();
+    QHBoxLayout * hLayout = new QHBoxLayout();
     hLayout->addWidget(previousButton);
     hLayout->addWidget(nextButton);
     vLayout->addLayout(hLayout);
@@ -75,9 +63,9 @@ void LearnWindow::showNextWord() {
  */
 void LearnWindow::updateWordDisplay() {
     if (currentIndex >= 0 && currentIndex < words.size()) {
-        QString word = words[currentIndex].first;
+        QString word = words[currentIndex]->getWord();
 
-        QString jsonData = words[currentIndex].second;
+        QString jsonData = words[currentIndex]->getData();
         QJsonDocument doc = QJsonDocument::fromJson(jsonData.toUtf8());
         QJsonObject obj = doc.object();
         // 加粗单词
