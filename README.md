@@ -1,1 +1,30 @@
-This is a simple project for the programming pratical class at Nanjing University of Posts and Telecommunications. Please don't skid this.
+# 背单词
+
+This is a simple project for the programming practical class at Nanjing University of Posts and Telecommunications. Please don't skid this.
+
+## 用户登录
+新用户可以注册，旧用户直接登录。
+
+可以只打卡不背词，直接退出界面。
+
+## 单词本
+存储单词基本信息，英文、词性、中文解释等。
+
+选择词库维护编辑单词本信息，实现增加、修改、删除、补充（单词已有，补充新的释义）的功能。
+
+## 单词背诵及成绩统计
+选择单词预览进行单词学习。
+
+单词背诵时有两种模式选择，选择题背诵及拼写单词背诵，而且支持多次背诵。
+
+答对加十分，答错扣十分，错词计入错题本。
+
+可查阅自己的总成绩，未达过关成绩可以选择错题重背直至完全掌握。
+
+## 单词复习
+背诵完全正确时界面显示没有错题继续努力。
+
+有错题时可以选择错题重背加强记忆。
+
+## 退出系统
+当退出系统时可以进行打卡，统计背诵单词天数。
