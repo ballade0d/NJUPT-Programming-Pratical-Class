@@ -16,6 +16,7 @@ CalendarWindow::CalendarWindow(QWidget *parent, int userId) : QDialog(parent) {
 
     calendar = new QCalendarWidget(this);
     calendar->setGridVisible(true);
+    calendar->setSelectionMode(QCalendarWidget::NoSelection);
 
     loadCheckIns();
 
@@ -26,6 +27,12 @@ CalendarWindow::CalendarWindow(QWidget *parent, int userId) : QDialog(parent) {
     if (isTodayCheckedIn()) {
         checkInButton->setText("今日已打卡");
         checkInButton->setEnabled(false); // 禁用按钮
+
+        calendar->setStyleSheet(R"(
+QCalendarWidget QAbstractItemView {
+    selection-background-color: green;
+}
+        )");
     }
     layout->addWidget(checkInButton);
 
@@ -92,6 +99,12 @@ void CalendarWindow::handleCheckInButton() {
     QPushButton *button = qobject_cast<QPushButton *>(sender());
     button->setText("今日已打卡");
     button->setEnabled(false); // 禁用按钮
+
+    calendar->setStyleSheet(R"(
+QCalendarWidget QAbstractItemView {
+    selection-background-color: green;
+}
+        )");
 
     // 更新日历视图以显示新的签到日期
     QTextCharFormat format;

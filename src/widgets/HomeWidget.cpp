@@ -19,20 +19,16 @@
 HomeWidget::HomeWidget(QWidget *parent) : QWidget(parent) {
 }
 
-/**
- * @brief setup 初始化主页窗口
- * @param userId 用户Id
- */
 void HomeWidget::setup(int userId) {
     this->userId = userId;
     QVBoxLayout *mainLayout = new QVBoxLayout(this);
 
     // 创建打卡日历按钮
-    QPushButton *checkInButton = new QPushButton("打卡日历", this);
+    QPushButton *checkInButton = new QPushButton("打卡日历");
     connect(checkInButton, &QPushButton::clicked, this, &HomeWidget::handleCalendarButton);
     mainLayout->addWidget(checkInButton);
 
-    listView = new QListView(this);
+    listView = new QListView();
     refreshList();
     QHBoxLayout *listLayout = new QHBoxLayout();
     listLayout->addWidget(listView);
@@ -41,33 +37,13 @@ void HomeWidget::setup(int userId) {
     QPushButton *deleteButton = new QPushButton("-");
     addButton->setFixedSize(30, 30); // 设置按钮大小
     deleteButton->setFixedSize(30, 30); // 设置按钮大小
-    QVBoxLayout *listButtonLayout = new QVBoxLayout();
-    listButtonLayout->addWidget(addButton);
-    listButtonLayout->addWidget(deleteButton);
-
-    // 设置按钮样式
-    QString listButtonStyle = R"(
-QPushButton {
-    background-color: #f0f0f0;
-    border: 1px solid #d0d0d0;
-    border-radius: 15px;
-    font-size: 20px;
-    color: #666666;
-}
-QPushButton:hover {
-    background-color: #e0e0e0;
-}
-QPushButton:pressed {
-    background-color: #d0d0d0;
-}
-)";
-    addButton->setStyleSheet(listButtonStyle);
-    deleteButton->setStyleSheet(listButtonStyle);
+    QGridLayout *listButtonLayout = new QGridLayout();
+    listButtonLayout->addWidget(addButton, 0, 0);
+    listButtonLayout->addWidget(deleteButton, 1, 0);
 
     connect(addButton, &QPushButton::clicked, this, &HomeWidget::handleAddButton);
     connect(deleteButton, &QPushButton::clicked, this, &HomeWidget::handleDeleteButton);
 
-    listLayout->addWidget(addButton);
     listLayout->addLayout(listButtonLayout);
 
     mainLayout->addLayout(listLayout);
@@ -77,7 +53,7 @@ QPushButton:pressed {
     mainLayout->addLayout(buttonLayout);
 
     // 学习按钮
-    QPushButton *learnButton = new QPushButton("开始学习", this);
+    QPushButton *learnButton = new QPushButton("开始学习");
     // 设置按钮默认状态为关闭，在选择物品时开启
     learnButton->setEnabled(false);  // 默认禁用
     connect(listView->selectionModel(), &QItemSelectionModel::selectionChanged,
@@ -89,7 +65,7 @@ QPushButton:pressed {
     buttonLayout->addWidget(learnButton, 0, 0);
 
     // 背诵按钮
-    QPushButton *reciteButton = new QPushButton("开始背诵", this);
+    QPushButton *reciteButton = new QPushButton("开始背诵");
     // 设置按钮默认状态为关闭，在选择物品时开启
     reciteButton->setEnabled(false);  // 默认禁用
     connect(listView->selectionModel(), &QItemSelectionModel::selectionChanged,
@@ -101,17 +77,17 @@ QPushButton:pressed {
     buttonLayout->addWidget(reciteButton, 0, 1);
 
     // 错题按钮
-    QPushButton *recordButton = new QPushButton("错题本", this);
+    QPushButton *recordButton = new QPushButton("错题本");
     connect(recordButton, &QPushButton::clicked, this, &HomeWidget::handleRecordButton);
     buttonLayout->addWidget(recordButton, 1, 0);
 
     // 复习按钮
-    QPushButton *reviewButton = new QPushButton("复习错题", this);
+    QPushButton *reviewButton = new QPushButton("复习错题");
     connect(reviewButton, &QPushButton::clicked, this, &HomeWidget::handleReviewButton);
     buttonLayout->addWidget(reviewButton, 1, 1);
 
     // 编辑按钮
-    QPushButton *editButton = new QPushButton("编辑", this);
+    QPushButton *editButton = new QPushButton("编辑");
     // 设置按钮默认状态为关闭，在选择物品时开启
     editButton->setEnabled(false);  // 默认禁用
     connect(listView->selectionModel(), &QItemSelectionModel::selectionChanged,
@@ -121,6 +97,31 @@ QPushButton:pressed {
             });
     connect(editButton, &QPushButton::clicked, this, &HomeWidget::handleEditButton);
     mainLayout->addWidget(editButton);
+    setStyleSheet(R"(
+QPushButton {
+    background-color: #0078D7;
+    color: #ffffff;
+    border-style: solid;
+    border-width: 1px;
+    border-radius: 5px;
+    border-color: #0053a6;
+    padding: 6px;
+}
+
+QPushButton:disabled {
+    background-color: #cccccc;
+    border-color: #aaaaaa;
+    color: #666666;
+}
+
+QPushButton:hover {
+    background-color: #0053a6;
+}
+
+QPushButton:pressed {
+    background-color: #00396d;
+}
+)");
 }
 
 /**
