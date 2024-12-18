@@ -59,6 +59,15 @@ public:
         query.exec();
         return query.next() && query.value(0).toInt() > 0;
     }
+
+    static bool isEmpty(int userId){
+        QSqlDatabase db = QSqlDatabase::database();
+        QSqlQuery query(db);
+        query.prepare("SELECT COUNT(*) FROM record WHERE user_id = :user_id");
+        query.bindValue(":user_id", userId);
+        query.exec();
+        return query.next() && query.value(0).toInt() == 0;
+    }
 };
 
 #endif //DEMO_RECORDMAPPER_H

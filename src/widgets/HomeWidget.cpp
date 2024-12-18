@@ -7,6 +7,7 @@
 #include "../dialog/BookAddDialog.h"
 #include "../dialog/BookDeleteDialog.h"
 #include "../windows/RecordBookWindow.h"
+#include "../mapper/RecordMapper.h"
 #include <QtSql>
 #include <QCryptographicHash>
 #include <QMessageBox>
@@ -24,7 +25,7 @@ void HomeWidget::setup(int userId) {
     QVBoxLayout * mainLayout = new QVBoxLayout(this);
 
     // 创建打卡日历按钮
-    QPushButton * checkInButton = new QPushButton("打卡日历");
+    QPushButton *checkInButton = new QPushButton("打卡日历");
     connect(checkInButton, &QPushButton::clicked, this, &HomeWidget::handleCalendarButton);
     mainLayout->addWidget(checkInButton);
 
@@ -33,8 +34,8 @@ void HomeWidget::setup(int userId) {
     QHBoxLayout * listLayout = new QHBoxLayout();
     listLayout->addWidget(listView);
 
-    QPushButton * addButton = new QPushButton("+");
-    QPushButton * deleteButton = new QPushButton("-");
+    QPushButton *addButton = new QPushButton("+");
+    QPushButton *deleteButton = new QPushButton("-");
     addButton->setFixedSize(30, 30); // 设置按钮大小
     deleteButton->setFixedSize(30, 30); // 设置按钮大小
     QGridLayout * listButtonLayout = new QGridLayout();
@@ -53,7 +54,7 @@ void HomeWidget::setup(int userId) {
     mainLayout->addLayout(buttonLayout);
 
     // 学习按钮
-    QPushButton * learnButton = new QPushButton("开始学习");
+    QPushButton *learnButton = new QPushButton("开始学习");
     // 设置按钮默认状态为关闭，在选择物品时开启
     learnButton->setEnabled(false);  // 默认禁用
     connect(listView->selectionModel(), &QItemSelectionModel::selectionChanged,
@@ -65,7 +66,7 @@ void HomeWidget::setup(int userId) {
     buttonLayout->addWidget(learnButton, 0, 0);
 
     // 背诵按钮
-    QPushButton * reciteButton = new QPushButton("开始背诵");
+    QPushButton *reciteButton = new QPushButton("开始背诵");
     // 设置按钮默认状态为关闭，在选择物品时开启
     reciteButton->setEnabled(false);  // 默认禁用
     connect(listView->selectionModel(), &QItemSelectionModel::selectionChanged,
@@ -77,17 +78,17 @@ void HomeWidget::setup(int userId) {
     buttonLayout->addWidget(reciteButton, 0, 1);
 
     // 错题按钮
-    QPushButton * recordButton = new QPushButton("错题本");
+    QPushButton *recordButton = new QPushButton("错题本");
     connect(recordButton, &QPushButton::clicked, this, &HomeWidget::handleRecordButton);
     buttonLayout->addWidget(recordButton, 1, 0);
 
     // 复习按钮
-    QPushButton * reviewButton = new QPushButton("复习错题");
+    QPushButton *reviewButton = new QPushButton("复习错题");
     connect(reviewButton, &QPushButton::clicked, this, &HomeWidget::handleReviewButton);
     buttonLayout->addWidget(reviewButton, 1, 1);
 
     // 编辑按钮
-    QPushButton * editButton = new QPushButton("编辑");
+    QPushButton *editButton = new QPushButton("编辑");
     // 设置按钮默认状态为关闭，在选择物品时开启
     editButton->setEnabled(false);  // 默认禁用
     connect(listView->selectionModel(), &QItemSelectionModel::selectionChanged,
@@ -189,8 +190,8 @@ void HomeWidget::handleReciteButton() {
     QMessageBox msgBox;
     msgBox.setWindowTitle("请选择背诵方式");
     msgBox.setText("请选择背诵方式");
-    QPushButton * button1 = msgBox.addButton("选择题背诵", QMessageBox::ActionRole);
-    QPushButton * button2 = msgBox.addButton("拼写单词背诵", QMessageBox::ActionRole);
+    QPushButton *button1 = msgBox.addButton("选择题背诵", QMessageBox::ActionRole);
+    QPushButton *button2 = msgBox.addButton("拼写单词背诵", QMessageBox::ActionRole);
     msgBox.exec();
 
     if (msgBox.clickedButton() == button1) {
@@ -239,12 +240,7 @@ void HomeWidget::handleDeleteButton() {
  * @brief handleRecordButton 处理错题本按钮
  */
 void HomeWidget::handleRecordButton() {
-    QSqlDatabase db = QSqlDatabase::database();
-    QSqlQuery query(db);
-    query.prepare("SELECT * FROM record WHERE user_id = :user_id");
-    query.bindValue(":user_id", userId);
-    query.exec();
-    if (!query.next()) {
+    if (RecordMapper::isEmpty(userId)) {
         QMessageBox::information(this, "提示", "错题本为空");
         return;
     }
@@ -259,12 +255,7 @@ void HomeWidget::handleRecordButton() {
  * @brief handleReviewButton 处理复习按钮
  */
 void HomeWidget::handleReviewButton() {
-    QSqlDatabase db = QSqlDatabase::database();
-    QSqlQuery query(db);
-    query.prepare("SELECT * FROM record WHERE user_id = :user_id");
-    query.bindValue(":user_id", userId);
-    query.exec();
-    if (!query.next()) {
+    if (RecordMapper::isEmpty(userId)) {
         QMessageBox::information(this, "提示", "错题本为空");
         return;
     }
@@ -272,8 +263,8 @@ void HomeWidget::handleReviewButton() {
     QMessageBox msgBox;
     msgBox.setWindowTitle("请选择背诵方式");
     msgBox.setText("请选择背诵方式");
-    QPushButton * button1 = msgBox.addButton("选择题背诵", QMessageBox::ActionRole);
-    QPushButton * button2 = msgBox.addButton("拼写单词背诵", QMessageBox::ActionRole);
+    QPushButton *button1 = msgBox.addButton("选择题背诵", QMessageBox::ActionRole);
+    QPushButton *button2 = msgBox.addButton("拼写单词背诵", QMessageBox::ActionRole);
     msgBox.exec();
 
     if (msgBox.clickedButton() == button1) {

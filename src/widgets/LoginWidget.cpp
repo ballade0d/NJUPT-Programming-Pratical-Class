@@ -26,7 +26,7 @@ LoginWidget::LoginWidget(QWidget *parent) : QWidget(parent) {
     QPushButton * loginButton = new QPushButton(this);
     // 位于密码输入框下方
     loginButton->setGeometry((480 - 100) / 2, 200 + 40 + 40, 100, 32);
-    loginButton->setText("登陆");
+    loginButton->setText("登录");
     loginButton->setObjectName("loginButton");
 
     // 创建注册按钮
@@ -134,7 +134,7 @@ void LoginWidget::handleLoginButton() {
     int id = checkPassword(username, password);
 
     if (id != -1) {
-        QMessageBox::information(nullptr, "信息", "登陆成功！");
+        QMessageBox::information(nullptr, "信息", "登录成功！");
         emit loginSuccessful(id);
     } else {
         QMessageBox::critical(nullptr, "错误", "用户名或密码错误！");
