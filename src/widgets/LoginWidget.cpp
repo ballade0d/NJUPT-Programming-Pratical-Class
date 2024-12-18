@@ -5,7 +5,7 @@
 #include <QMessageBox>
 
 /**
- * @brief LoginWidget 登陆窗口
+ * @brief LoginWidget 登录窗口
  * @param parent 父窗口
  */
 LoginWidget::LoginWidget(QWidget *parent) : QWidget(parent) {
@@ -22,7 +22,7 @@ LoginWidget::LoginWidget(QWidget *parent) : QWidget(parent) {
     passwordLineEdit->setGeometry((480 - 200) / 2, 200 + 40, 200, 32);
     passwordLineEdit->setPlaceholderText("密码");
 
-    // 创建登陆按钮
+    // 创建登录按钮
     QPushButton * loginButton = new QPushButton(this);
     // 位于密码输入框下方
     loginButton->setGeometry((480 - 100) / 2, 200 + 40 + 40, 100, 32);
@@ -152,7 +152,7 @@ void LoginWidget::handleRegisterButton() {
     }
 
     if (UserMapper::exists(username)) {
-        QMessageBox::critical(nullptr, "错误", "用户名已存在，请登陆！");
+        QMessageBox::critical(nullptr, "错误", "用户名已存在，请登录！");
     } else {
         UserMapper::createUser(username, encryptPassword(password));
         QMessageBox::information(nullptr, "信息", "注册成功！请登录");
