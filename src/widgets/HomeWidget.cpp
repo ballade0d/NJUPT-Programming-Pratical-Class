@@ -288,10 +288,10 @@ void HomeWidget::refreshList() {
         bookNames.append(book->getName());
     }
 
+    // 如果列表视图没有设置模型，则创建一个新的模型。否则只更新模型的数据
     if (listView->model() == nullptr) {
         QStringListModel *model = new QStringListModel(bookNames);
         listView->setModel(model);
     }
-
     dynamic_cast<QStringListModel *>(listView->model())->setStringList(bookNames);
 }

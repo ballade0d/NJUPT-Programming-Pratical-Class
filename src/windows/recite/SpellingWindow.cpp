@@ -4,13 +4,11 @@
 #include "../../mapper/RecordMapper.h"
 #include <QDialog>
 #include <QVBoxLayout>
-#include <QSqlDatabase>
 #include <QPushButton>
 #include <QJsonDocument>
 #include <QJsonObject>
 #include <QLineEdit>
 #include <QTimer>
-#include <QSqlError>
 
 /**
  * @brief SpellingWindow 拼写窗口
@@ -31,9 +29,9 @@ SpellingWindow::SpellingWindow(QWidget *parent, int userId, int bookId) : QWidge
     }
 
     // 创建一个垂直布局
-    QVBoxLayout *vLayout = new QVBoxLayout(this);
+    QVBoxLayout * vLayout = new QVBoxLayout(this);
 
-    QHBoxLayout *wordAndIcon = new QHBoxLayout();
+    QHBoxLayout * wordAndIcon = new QHBoxLayout();
     // 创建显示单词的标签
     wordLabel = new QLabel();
     wordLabel->setAlignment(Qt::AlignCenter);
@@ -67,12 +65,7 @@ void SpellingWindow::handleNextButton() {
 
         if (bookId == -1) {
             // 从错题本中删除
-            QSqlDatabase db = QSqlDatabase::database();
-            QSqlQuery query(db);
-            query.prepare("DELETE FROM record WHERE user_id = :user_id AND word_id = :word_id");
-            query.bindValue(":user_id", userId);
-            query.bindValue(":word_id", words[currentIndex]->getId());
-            query.exec();
+            RecordMapper::removeWord(userId, words[currentIndex]);
         }
     } else {
         pixmap = QPixmap(":/incorrect.svg");
@@ -118,7 +111,7 @@ bool SpellingWindow::check() {
     // 遍历所有的 QLineEdit，获取其中的文本
     for (int i = 0; i < spellingLayout->count(); ++i) {
         QLayoutItem *item = spellingLayout->itemAt(i);
-        QWidget *widget = item->widget();
+        QWidget * widget = item->widget();
         if (widget) {
             QLineEdit *lineEdit = qobject_cast<QLineEdit *>(widget);
             if (lineEdit) {

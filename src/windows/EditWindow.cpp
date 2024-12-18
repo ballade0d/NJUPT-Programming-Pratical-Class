@@ -86,9 +86,15 @@ void EditWindow::handleEditButton() {
     if (dialog.exec() == QDialog::Accepted) {
         newText = dialog.getText();
         // 解析用户编辑后的 JSON
-        QJsonDocument newDoc = QJsonDocument::fromJson(newText.toUtf8());
+        QJsonParseError parseError;
+        QJsonDocument newDoc = QJsonDocument::fromJson(newText.toUtf8() , &parseError);
         // 将 JSON 转换为紧凑格式
         QString unbeautifiedJson = newDoc.toJson(QJsonDocument::Compact);
+        // 检查 JSON 格式是否正确
+        if(parseError.error != QJsonParseError::NoError) {
+            QMessageBox::warning(this, "错误", "JSON 格式错误");
+            return;
+        }
         // 更新数据到数据库
         word->setData(unbeautifiedJson);
         WordMapper::updateWord(word);
@@ -106,9 +112,15 @@ void EditWindow::handleAddButton() {
         QString newWord = dialog.getWord();
         QString newText = dialog.getText();
         // 解析用户编辑后的 JSON
-        QJsonDocument doc = QJsonDocument::fromJson(newText.toUtf8());
+        QJsonParseError parseError;
+        QJsonDocument doc = QJsonDocument::fromJson(newText.toUtf8(), &parseError);
         // 将 JSON 转换为紧凑格式
         QString unbeautifiedJson = doc.toJson(QJsonDocument::Compact);
+        // 检查 JSON 格式是否正确
+        if(parseError.error != QJsonParseError::NoError) {
+            QMessageBox::warning(this, "错误", "JSON 格式错误");
+            return;
+        }
         // 更新数据到数据库
         WordMapper::createWord(bookId, newWord, unbeautifiedJson);
     }
@@ -138,10 +150,10 @@ void EditWindow::refreshList() {
     for (Word *word: words) {
         spellings.append(word->getWord());
     }
+    // 如果列表模型为空，则创建一个新的列表模型。否则只更新列表模型
     if (wordList->model() == nullptr) {
         QStringListModel *model = new QStringListModel(this);
         wordList->setModel(model);
     }
-
     dynamic_cast<QStringListModel *>(wordList->model())->setStringList(spellings);
 }

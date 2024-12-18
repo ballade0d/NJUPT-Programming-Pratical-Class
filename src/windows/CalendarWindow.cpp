@@ -27,6 +27,7 @@ CalendarWindow::CalendarWindow(QWidget *parent, int userId) : QDialog(parent) {
         checkInButton->setText("今日已打卡");
         checkInButton->setEnabled(false); // 禁用按钮
 
+        // 如果今日已打卡，将当前日期的背景色设置为绿色
         calendar->setStyleSheet(R"(
 QCalendarWidget QAbstractItemView {
     selection-background-color: green;

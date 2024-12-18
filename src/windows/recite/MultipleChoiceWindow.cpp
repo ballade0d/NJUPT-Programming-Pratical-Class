@@ -11,9 +11,6 @@
 #include <QRandomGenerator>
 #include <QTimer>
 
-// 预定义错误答案
-QStringList predefinedWrongAnswers = {"测试", "2", "3", "4", "5"};
-
 /**
  * @brief MultipleChoiceWindow 选择题窗口
  * @param parent 父窗口
@@ -118,13 +115,9 @@ void MultipleChoiceWindow::updateWordDisplay() {
             QString wrongAnswer = waObj.value("释义").toString();
             wrongAnswersTemp.append(wrongAnswer);
         }
-        // 如果从words中获取的错误答案不足，从预定义列表中补充
+        // 如果从words中获取的错误答案不足3个，则用空字符串填充
         while (wrongAnswersTemp.size() < 3) {
-            QString & randomWrongAnswer = predefinedWrongAnswers[QRandomGenerator::global()->bounded(
-                    predefinedWrongAnswers.size())];
-            if (!wrongAnswersTemp.contains(randomWrongAnswer)) {
-                wrongAnswersTemp.append(randomWrongAnswer);
-            }
+            wrongAnswersTemp.append("");
         }
 
         int wrongAnswerIndex = 0;
