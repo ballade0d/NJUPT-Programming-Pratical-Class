@@ -27,7 +27,7 @@ public:
         return nullptr;
     }
 
-    static void createUser(const QString &username, const QString &password) {
+    static int createUser(const QString &username, const QString &password) {
         QSqlDatabase db = QSqlDatabase::database();
         QSqlQuery query(db);
         query.prepare("INSERT INTO user_password(username, password) VALUES (:username, :password)");
@@ -35,6 +35,8 @@ public:
         query.bindValue(":password", password);
 
         query.exec();
+
+        return query.lastInsertId().toInt();
     }
 
     static bool exists(const QString &username) {

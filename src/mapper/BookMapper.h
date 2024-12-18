@@ -12,13 +12,15 @@
 
 class BookMapper {
 public:
-    static void createBook(int userId, QString name) {
+    static int createBook(int userId, QString name) {
         QSqlDatabase db = QSqlDatabase::database();
         QSqlQuery query(db);
         query.prepare("INSERT INTO book(user_id, name) VALUES (:user_id, :name)");
         query.bindValue(":user_id", userId);
         query.bindValue(":name", name);
         query.exec();
+
+        return query.lastInsertId().toInt();
     }
 
     static void deleteBook(int id) {

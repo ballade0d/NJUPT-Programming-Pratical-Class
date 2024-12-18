@@ -1,6 +1,8 @@
 #include "LoginWidget.h"
 #include "../entity/User.h"
 #include "../mapper/UserMapper.h"
+#include "../mapper/BookMapper.h"
+#include "../mapper/WordMapper.h"
 #include <QCryptographicHash>
 #include <QMessageBox>
 
@@ -154,7 +156,22 @@ void LoginWidget::handleRegisterButton() {
     if (UserMapper::exists(username)) {
         QMessageBox::critical(nullptr, "错误", "用户名已存在，请登录！");
     } else {
-        UserMapper::createUser(username, encryptPassword(password));
+        int userId = UserMapper::createUser(username, encryptPassword(password));
+        int bookId = BookMapper::createBook(userId, "默认单词本");
+        WordMapper::createWord(bookId, "abandon", "{\"释义\":\"vt.丢弃;放弃，抛弃\",\"音标\":\"/ə’bændən/\"}");
+        WordMapper::createWord(bookId, "aboard", "{\"释义\":\"ad.在船(车)上;上船\",\"音标\":\"/ə’bɔ:d/\"}");
+        WordMapper::createWord(bookId, "absolute", "{\"释义\":\"a.绝对的;纯粹的\",\"音标\":\"/‘æbsəlu:t/\"}");
+        WordMapper::createWord(bookId, "cable", "{\"释义\":\"n.缆，索;电缆;电报\",\"音标\":\"/‘keibl/\"}");
+        WordMapper::createWord(bookId, "cafe", "{\"释义\":\"n.咖啡馆;小餐厅\",\"音标\":\"/‘kæfei,kə’fei/\"}");
+        WordMapper::createWord(bookId, "cage", "{\"释义\":\"n.笼;鸟笼，囚笼\",\"音标\":\"/keidʒ/\"}");
+        WordMapper::createWord(bookId, "baggage", "{\"释义\":\"n.行李\",\"音标\":\"/‘bægidʒ/\"}");
+        WordMapper::createWord(bookId, "bake", "{\"释义\":\"vt.烤，烘，焙;烧硬\",\"音标\":\"/beik/\"}");
+        WordMapper::createWord(bookId, "balance", "{\"释义\":\"vt.使平衡;称n.天平\",\"音标\":\"/‘bæləns/\"}");
+        WordMapper::createWord(bookId, "ball", "{\"释义\":\"n.球，球状物;舞会\",\"音标\":\"/bɔ:l/\"}");
+        WordMapper::createWord(bookId, "balloon", "{\"释义\":\"n.气球，玩具气球\",\"音标\":\"/bə’lu:n/\"}");
+        WordMapper::createWord(bookId, "banana", "{\"释义\":\"n.香蕉;芭蕉属植物\",\"音标\":\"/bə’na:nə/\"}");
+        WordMapper::createWord(bookId, "band", "{\"释义\":\"n.乐队;带;波段\",\"音标\":\"/bænd/\"}");
+
         QMessageBox::information(nullptr, "信息", "注册成功！请登录");
     }
 }
